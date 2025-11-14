@@ -215,24 +215,41 @@ const backgroundMusic = document.getElementById('backgroundMusic');
 const musicToggle = document.getElementById('musicToggle');
 const musicPlayer = document.getElementById('musicPlayer');
 const musicIcon = musicToggle ? musicToggle.querySelector('.music-icon') : null;
+const musicInfo = document.getElementById('musicInfo');
 
-// 음악 파일 존재 여부 확인 (지연 로딩)
+// 음악 파일 존재 여부 확인 및 자동 재생 시도
+let musicFileLoaded = false;
+
 function checkMusicFile() {
     if (!backgroundMusic) return;
     
+    // 플레이어는 항상 표시 (에러가 있어도 사용자가 확인할 수 있도록)
+    if (musicPlayer) {
+        musicPlayer.style.display = 'flex';
+    }
+    
     // 음악 파일이 있는지 확인
     backgroundMusic.addEventListener('canplaythrough', function() {
-        // 음악 파일이 있으면 플레이어 표시
-        if (musicPlayer) {
-            musicPlayer.style.display = 'flex';
-        }
+        musicFileLoaded = true;
+        // 음악 파일이 로드되면 즉시 재생 시도
+        tryAutoPlay();
+    }, { once: true });
+    
+    backgroundMusic.addEventListener('loadeddata', function() {
+        musicFileLoaded = true;
+        // 데이터가 로드되면 재생 시도 (더 빠른 시도)
+        tryAutoPlay();
     }, { once: true });
     
     backgroundMusic.addEventListener('error', function(e) {
-        // 음악 파일이 없으면 플레이어 숨기기
-        console.log('음악 파일 로드 실패:', e);
-        if (musicPlayer) {
-            musicPlayer.style.display = 'none';
+        // 음악 파일 로드 실패 - 플레이어는 표시하되 에러 표시
+        console.error('음악 파일 로드 실패:', e);
+        console.error('음악 파일 경로:', backgroundMusic.src);
+        musicFileLoaded = false;
+        
+        // 에러 메시지 표시
+        if (musicInfo) {
+            musicInfo.innerHTML = '<span class="music-text" style="color: #ff6b6b;">음악 파일을 불러올 수 없습니다</span>';
         }
     }, { once: true });
     
@@ -249,45 +266,94 @@ if (document.readyState === 'loading') {
     checkMusicFile();
 }
 
-// 자동 재생 시도 함수
+// 자동 재생 시도 함수 (여러 방법 시도)
 function tryAutoPlay() {
-    if (backgroundMusic && musicPlayer && musicPlayer.style.display !== 'none') {
-        backgroundMusic.volume = 0.5;
-        const playPromise = backgroundMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
+    if (!backgroundMusic || !musicPlayer || musicPlayer.style.display === 'none') return;
+    
+    // 이미 재생 중이면 중단
+    if (!backgroundMusic.paused) return;
+    
+    backgroundMusic.volume = 0.5;
+    
+    // 방법 1: 일반 재생 시도
+    const playPromise = backgroundMusic.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            if (musicToggle) musicToggle.classList.add('playing');
+            if (musicIcon) musicIcon.textContent = '⏸️';
+        }).catch(error => {
+            // 방법 2: muted 상태로 재생 후 unmute (일부 브라우저에서 작동)
+            backgroundMusic.muted = true;
+            backgroundMusic.play().then(() => {
+                backgroundMusic.muted = false;
                 if (musicToggle) musicToggle.classList.add('playing');
                 if (musicIcon) musicIcon.textContent = '⏸️';
-            }).catch(error => {
-                // 자동 재생 실패 시 조용히 처리 (브라우저 정책)
-                console.log('자동 재생 실패 (사용자 인터랙션 필요):', error);
+            }).catch(err => {
+                // 자동 재생 실패 - 사용자 인터랙션 필요
+                console.log('자동 재생 실패 (사용자 인터랙션 필요)');
             });
+        });
+    }
+}
+
+// 사용자 인터랙션 후 자동 재생 시도 (더 적극적으로)
+let userInteracted = false;
+let autoPlayAttempted = false;
+
+function handleUserInteraction() {
+    if (!userInteracted && backgroundMusic && backgroundMusic.paused && musicPlayer && musicPlayer.style.display !== 'none') {
+        userInteracted = true;
+        if (!autoPlayAttempted) {
+            autoPlayAttempted = true;
+            tryAutoPlay();
         }
     }
 }
 
-// 사용자 인터랙션 후 자동 재생 시도
-let userInteracted = false;
-const interactionEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+// 다양한 이벤트에 대해 재생 시도
+const interactionEvents = ['click', 'touchstart', 'touchend', 'mousedown', 'scroll', 'keydown', 'pointerdown'];
 interactionEvents.forEach(event => {
-    document.addEventListener(event, function() {
-        if (!userInteracted && backgroundMusic && backgroundMusic.paused && musicPlayer && musicPlayer.style.display !== 'none') {
-            userInteracted = true;
-            tryAutoPlay();
-        }
-    }, { once: true });
+    document.addEventListener(event, handleUserInteraction, { passive: true });
 });
+
+// body 클릭도 감지
+document.body.addEventListener('click', handleUserInteraction, { once: true, passive: true });
 
 // 음악 재생/일시정지 토글
 if (musicToggle && backgroundMusic) {
     musicToggle.addEventListener('click', function() {
         if (backgroundMusic.paused) {
-            backgroundMusic.play().then(() => {
-                musicToggle.classList.add('playing');
-                if (musicIcon) musicIcon.textContent = '⏸️';
-            }).catch(error => {
-                console.log('음악 재생 실패:', error);
-            });
+            // 음악 파일이 로드되지 않았으면 다시 로드 시도
+            if (!musicFileLoaded && backgroundMusic.readyState === 0) {
+                backgroundMusic.load();
+            }
+            
+            const playPromise = backgroundMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    musicToggle.classList.add('playing');
+                    if (musicIcon) musicIcon.textContent = '⏸️';
+                    if (musicInfo) {
+                        musicInfo.innerHTML = '<span class="music-text">배경음악</span>';
+                    }
+                }).catch(error => {
+                    console.error('음악 재생 실패:', error);
+                    console.error('음악 파일 경로:', backgroundMusic.src);
+                    console.error('음악 파일 상태:', {
+                        readyState: backgroundMusic.readyState,
+                        networkState: backgroundMusic.networkState,
+                        error: backgroundMusic.error
+                    });
+                    
+                    // 사용자에게 에러 메시지 표시
+                    if (musicInfo) {
+                        musicInfo.innerHTML = '<span class="music-text" style="color: #ff6b6b;">재생할 수 없습니다</span>';
+                    }
+                    
+                    // 에러 메시지 토스트 표시
+                    showToast('음악을 재생할 수 없습니다. 파일 경로를 확인해주세요.');
+                });
+            }
         } else {
             backgroundMusic.pause();
             musicToggle.classList.remove('playing');
