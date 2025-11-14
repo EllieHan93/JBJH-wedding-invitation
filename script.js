@@ -220,52 +220,49 @@ const musicIcon = musicToggle ? musicToggle.querySelector('.music-icon') : null;
 function checkMusicFile() {
     if (!backgroundMusic) return;
     
-    // 외부 스토리지 링크 사용 시 음악 소스에서 URL 가져오기
-    const musicSource = document.getElementById('musicSource');
-    const musicUrl = musicSource ? musicSource.src : 'music.mp3';
-    
     // 음악 파일이 있는지 확인
-    const audio = new Audio();
-    audio.src = musicUrl;
-    audio.preload = 'none';
-    
-    audio.addEventListener('canplaythrough', function() {
+    backgroundMusic.addEventListener('canplaythrough', function() {
         // 음악 파일이 있으면 플레이어 표시
         if (musicPlayer) {
             musicPlayer.style.display = 'flex';
         }
     }, { once: true });
     
-    audio.addEventListener('error', function() {
+    backgroundMusic.addEventListener('error', function(e) {
         // 음악 파일이 없으면 플레이어 숨기기
+        console.log('음악 파일 로드 실패:', e);
         if (musicPlayer) {
             musicPlayer.style.display = 'none';
         }
     }, { once: true });
     
-    // 실제로 로드 시도 (에러 발생 시 숨김)
-    audio.load();
+    // 실제로 로드 시도
+    backgroundMusic.load();
 }
 
-// 페이지 로드 완료 후 음악 파일 확인 (지연)
+// 페이지 로드 완료 후 음악 파일 확인
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(checkMusicFile, 2000); // 2초 후 확인
+        checkMusicFile();
     });
 } else {
-    setTimeout(checkMusicFile, 2000);
+    checkMusicFile();
 }
 
 // 자동 재생 시도 함수
 function tryAutoPlay() {
     if (backgroundMusic && musicPlayer && musicPlayer.style.display !== 'none') {
         backgroundMusic.volume = 0.5;
-        backgroundMusic.play().then(() => {
-            if (musicToggle) musicToggle.classList.add('playing');
-            if (musicIcon) musicIcon.textContent = '⏸️';
-        }).catch(error => {
-            // 자동 재생 실패 시 조용히 처리
-        });
+        const playPromise = backgroundMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                if (musicToggle) musicToggle.classList.add('playing');
+                if (musicIcon) musicIcon.textContent = '⏸️';
+            }).catch(error => {
+                // 자동 재생 실패 시 조용히 처리 (브라우저 정책)
+                console.log('자동 재생 실패 (사용자 인터랙션 필요):', error);
+            });
+        }
     }
 }
 
