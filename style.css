@@ -513,21 +513,24 @@ body {
 
 .parents {
     display: flex;
-    justify-content: space-around;
-    gap: 15px;
+    justify-content: center;
+    gap: 20px;
     margin-top: 50px;
+    flex-wrap: wrap;
 }
 
 .parent-group {
     text-align: center;
-    padding: 25px 30px;
+    padding: 20px 25px;
     border-radius: 12px;
     background: transparent;
     border: 1px solid rgba(74, 85, 104, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 200px;
+    min-width: 180px;
+    max-width: 220px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    flex: 0 1 auto;
 }
 
 .parent-group:hover {
