@@ -291,33 +291,61 @@ function setupImageLoaders() {
     });
 }
 
-// Lazy loading 최적화
-const images = document.querySelectorAll('img[loading="lazy"]');
-if ('loading' in HTMLImageElement.prototype) {
-    // 네이티브 lazy loading 지원
-    images.forEach(img => {
-        if (img.dataset.src) {
-            img.src = img.dataset.src;
-        }
-    });
-} else {
-    // Lazy loading 폴리필
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
+// Lazy loading 최적화 (개선)
+const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+if (lazyImages.length > 0) {
+    if ('loading' in HTMLImageElement.prototype && 'IntersectionObserver' in window) {
+        // 네이티브 lazy loading + Intersection Observer로 추가 최적화
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    // 이미지가 뷰포트에 가까워지면 미리 로드
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    observer.unobserve(img);
                 }
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
+            });
+        }, {
+            rootMargin: '100px', // 뷰포트 100px 전에 미리 로드
+            threshold: 0.01
+        });
+        
+        lazyImages.forEach(img => {
+            if (img.dataset.src) {
+                imageObserver.observe(img);
             }
         });
-    }, {
-        rootMargin: '50px' // 미리 로드할 여유 공간
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
+    } else if ('loading' in HTMLImageElement.prototype) {
+        // 네이티브 lazy loading만 지원
+        lazyImages.forEach(img => {
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            }
+        });
+    } else {
+        // Lazy loading 폴리필
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    img.classList.remove('lazy');
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '100px'
+        });
+        
+        lazyImages.forEach(img => imageObserver.observe(img));
+    }
 }
 
 // 페이지 로드 시 이미지 로더 설정

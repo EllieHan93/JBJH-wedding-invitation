@@ -38,6 +38,7 @@
     
     <!-- Preload critical resources -->
     <link rel="preload" as="image" href="photos/hero.jpg" id="preloadHero">
+    <link rel="preload" as="image" href="photos/1.jpg">
     <!-- 카카오톡 JavaScript SDK -->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
@@ -121,7 +122,7 @@
             <div class="main-photo-container">
                 <div class="main-photo">
                     <div class="image-loader" id="mainPhotoLoader"></div>
-                    <img id="mainPhoto" src="photos/1.jpg" alt="메인 사진" loading="lazy" decoding="async">
+                    <img id="mainPhoto" src="photos/1.jpg" alt="메인 사진" loading="eager" decoding="async" fetchpriority="high">
                 </div>
             </div>
             <!-- 썸네일 갤러리 -->
@@ -306,7 +307,7 @@
                                 <a href="kakaotalk://chat?id=신부아버지카카오톡ID" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="아버지">
                                     <span class="kakao-icon">💬</span>
                                 </a>
-                                <a href="kakaotalk://chat?id=신부어머니카카오톡ID" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="어머니">
+                                <a href="kakaotalk://chat?id=ajsl0716@naver.com" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="어머니">
                                     <span class="kakao-icon">💬</span>
                                 </a>
                             </div>
