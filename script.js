@@ -861,43 +861,8 @@ function createFallingHearts() {
         }
     }
     
-    // hero 섹션 높이 확인
-    const heroSection = document.querySelector('.hero');
-    if (!heroSection) {
-        // hero 섹션이 없으면 바로 시작
-        startHearts();
-        return;
-    }
-    
-    function checkScrollPosition() {
-        const heroRect = heroSection.getBoundingClientRect();
-        const heroBottom = heroRect.bottom;
-        const viewportHeight = window.innerHeight;
-        
-        // hero 섹션이 화면에서 완전히 벗어났는지 확인
-        // hero 섹션의 하단이 화면 상단보다 위에 있으면 (스크롤해서 지나감)
-        if (heroBottom < 0) {
-            // hero 섹션을 지나면 하트 시작
-            startHearts();
-        } else if (heroBottom > viewportHeight) {
-            // hero 섹션이 아직 화면에 있으면 하트 중지
-            stopHearts();
-        } else {
-            // hero 섹션이 화면에 일부라도 보이면 하트 중지
-            stopHearts();
-        }
-    }
-    
-    // 스크롤 이벤트로 확인
-    window.addEventListener('scroll', checkScrollPosition, { passive: true });
-    
-    // 리사이즈 이벤트도 확인 (화면 크기 변경 시)
-    window.addEventListener('resize', checkScrollPosition, { passive: true });
-    
-    // 초기 확인 (약간의 딜레이를 두고 확인)
-    setTimeout(() => {
-        checkScrollPosition();
-    }, 100);
+    // 시작부터 하트 떨어뜨리기
+    startHearts();
 }
 
 // "We are getting married" 타이핑 애니메이션
@@ -934,5 +899,12 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', typeWeddingText);
 } else {
     typeWeddingText();
+}
+
+// 페이지 로드 후 하트 효과 시작
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createFallingHearts);
+} else {
+    createFallingHearts();
 }
 

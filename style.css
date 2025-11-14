@@ -162,13 +162,20 @@ body {
 .wedding-text {
     font-family: 'Great Vibes', cursive;
     font-size: 2.5rem;
-    color: var(--white);
+    color: var(--text-color);
     text-align: center;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     opacity: 0;
     animation: fadeIn 0.5s ease-in forwards;
     min-height: 60px;
+    box-sizing: border-box;
 }
 
 .wedding-text .char {
