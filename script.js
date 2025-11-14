@@ -5,32 +5,174 @@ const closeBtn = document.querySelector('.modal-close');
 const mainPhoto = document.getElementById('mainPhoto');
 const thumbnailItems = document.querySelectorAll('.thumbnail-item');
 
+// 사진 목록 배열 생성
+const photoList = Array.from(thumbnailItems).map(item => ({
+    url: item.getAttribute('data-photo'),
+    alt: item.querySelector('img').alt,
+    element: item
+}));
+
+// 현재 사진 인덱스
+let currentPhotoIndex = 0;
+
+// 사진 변경 함수
+function changePhoto(index) {
+    if (index < 0 || index >= photoList.length) return;
+    
+    currentPhotoIndex = index;
+    const photo = photoList[index];
+    
+    // 메인 이미지 변경
+    mainPhoto.src = photo.url;
+    mainPhoto.alt = photo.alt;
+    
+    // 활성 썸네일 변경
+    thumbnailItems.forEach(thumb => thumb.classList.remove('active'));
+    photo.element.classList.add('active');
+    
+    // 선택한 썸네일로 스크롤 (가능한 경우)
+    photo.element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+// 다음 사진
+function nextPhoto() {
+    const nextIndex = (currentPhotoIndex + 1) % photoList.length;
+    changePhoto(nextIndex);
+}
+
+// 이전 사진
+function prevPhoto() {
+    const prevIndex = (currentPhotoIndex - 1 + photoList.length) % photoList.length;
+    changePhoto(prevIndex);
+}
+
 // 썸네일 클릭 시 메인 이미지 변경
-thumbnailItems.forEach(item => {
+thumbnailItems.forEach((item, index) => {
     item.addEventListener('click', function() {
-        const photoUrl = this.getAttribute('data-photo');
-        const photoAlt = this.querySelector('img').alt;
-        
-        // 메인 이미지 변경
-        mainPhoto.src = photoUrl;
-        mainPhoto.alt = photoAlt;
-        
-        // 활성 썸네일 변경
-        thumbnailItems.forEach(thumb => thumb.classList.remove('active'));
-        this.classList.add('active');
-        
-        // 선택한 썸네일로 스크롤 (가능한 경우)
-        this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        changePhoto(index);
     });
 });
 
-// 메인 이미지 클릭 시 모달로 크게 보기
+// 스와이프 제스처 처리
+let touchStartX = 0;
+let touchEndX = 0;
+let isDragging = false;
+let clickStartTime = 0;
+let clickStartX = 0;
+let clickStartY = 0;
+
+// 터치 이벤트
 if (mainPhoto) {
-    mainPhoto.addEventListener('click', function() {
-        modal.style.display = 'block';
-        modalImg.src = this.src;
-        modalImg.alt = this.alt;
-        document.body.style.overflow = 'hidden';
+    mainPhoto.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        clickStartTime = Date.now();
+        clickStartX = e.touches[0].clientX;
+        clickStartY = e.touches[0].clientY;
+        isDragging = false;
+    }, { passive: true });
+    
+    mainPhoto.addEventListener('touchmove', function(e) {
+        isDragging = true;
+    }, { passive: true });
+    
+    mainPhoto.addEventListener('touchend', function(e) {
+        if (!isDragging) return;
+        
+        touchEndX = e.changedTouches[0].clientX;
+        const swipeDistance = touchStartX - touchEndX;
+        const minSwipeDistance = 50; // 최소 스와이프 거리
+        
+        if (Math.abs(swipeDistance) > minSwipeDistance) {
+            if (swipeDistance > 0) {
+                // 왼쪽으로 스와이프 (다음 사진)
+                nextPhoto();
+            } else {
+                // 오른쪽으로 스와이프 (이전 사진)
+                prevPhoto();
+            }
+        }
+    }, { passive: true });
+    
+    // 마우스 드래그 이벤트 (데스크톱)
+    let mouseStartX = 0;
+    let mouseIsDown = false;
+    
+    mainPhoto.addEventListener('mousedown', function(e) {
+        mouseStartX = e.clientX;
+        mouseIsDown = true;
+    });
+    
+    mainPhoto.addEventListener('mousemove', function(e) {
+        if (!mouseIsDown) return;
+        isDragging = true;
+    });
+    
+    mainPhoto.addEventListener('mouseup', function(e) {
+        if (!mouseIsDown || !isDragging) {
+            mouseIsDown = false;
+            isDragging = false;
+            return;
+        }
+        
+        const mouseEndX = e.clientX;
+        const dragDistance = mouseStartX - mouseEndX;
+        const minDragDistance = 50;
+        
+        if (Math.abs(dragDistance) > minDragDistance) {
+            if (dragDistance > 0) {
+                // 왼쪽으로 드래그 (다음 사진)
+                nextPhoto();
+            } else {
+                // 오른쪽으로 드래그 (이전 사진)
+                prevPhoto();
+            }
+        }
+        
+        mouseIsDown = false;
+        isDragging = false;
+    });
+    
+    mainPhoto.addEventListener('mouseleave', function() {
+        mouseIsDown = false;
+        isDragging = false;
+    });
+}
+
+// 메인 이미지 클릭 시 모달로 크게 보기 (드래그가 아닐 때만)
+if (mainPhoto) {
+    mainPhoto.addEventListener('mousedown', function(e) {
+        clickStartTime = Date.now();
+        clickStartX = e.clientX;
+        clickStartY = e.clientY;
+    });
+    
+    mainPhoto.addEventListener('click', function(e) {
+        // 드래그가 아니고, 짧은 클릭일 때만 모달 열기
+        const clickDuration = Date.now() - clickStartTime;
+        const clickDistance = Math.abs(e.clientX - clickStartX) + Math.abs(e.clientY - clickStartY);
+        
+        if (clickDuration < 300 && clickDistance < 10 && !isDragging) {
+            modal.style.display = 'block';
+            modalImg.src = this.src;
+            modalImg.alt = this.alt;
+            document.body.style.overflow = 'hidden';
+        }
+    });
+    
+    // 터치 클릭 처리
+    mainPhoto.addEventListener('touchend', function(e) {
+        const touchDuration = Date.now() - clickStartTime;
+        const touch = e.changedTouches[0];
+        const touchDistance = Math.abs(touch.clientX - clickStartX) + Math.abs(touch.clientY - clickStartY);
+        
+        // 스와이프가 아니고, 짧은 터치일 때만 모달 열기
+        if (touchDuration < 300 && touchDistance < 10 && !isDragging) {
+            e.preventDefault();
+            modal.style.display = 'block';
+            modalImg.src = this.src;
+            modalImg.alt = this.alt;
+            document.body.style.overflow = 'hidden';
+        }
     });
 }
 
@@ -655,4 +797,68 @@ window.addEventListener('beforeunload', () => {
     window.removeEventListener('scroll', optimizedScrollHandler);
     window.removeEventListener('resize', optimizedResizeHandler);
 });
+
+// 떨어지는 하트 효과
+function createFallingHearts() {
+    const heartsContainer = document.getElementById('fallingHearts');
+    if (!heartsContainer) return;
+    
+    // 빨강과 흰색 하트
+    const heartColors = [
+        '#FF0000', // 빨강
+        '#FFFFFF', // 흰색
+        '#FF3333', // 밝은 빨강
+        '#FFFFFF', // 흰색
+        '#CC0000', // 어두운 빨강
+        '#FFFFFF', // 흰색
+        '#FF0000', // 빨강
+        '#FFFFFF', // 흰색
+        '#FF6666', // 연한 빨강
+        '#FFFFFF'  // 흰색
+    ];
+    
+    const heartEmojis = ['💕', '💖', '💗', '💓', '💝', '💘', '💞', '💟', '❤️', '🧡'];
+    
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'falling-heart';
+        
+        // 랜덤 색상과 이모지 선택
+        const randomColor = heartColors[Math.floor(Math.random() * heartColors.length)];
+        const randomEmoji = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+        
+        heart.textContent = randomEmoji;
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.color = randomColor;
+        heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7초
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        heart.style.fontSize = (Math.random() * 10 + 15) + 'px'; // 15-25px
+        
+        heartsContainer.appendChild(heart);
+        
+        // 애니메이션 종료 후 제거
+        setTimeout(() => {
+            heart.remove();
+        }, 8000);
+    }
+    
+    // 초기 하트 생성
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => createHeart(), i * 500);
+    }
+    
+    // 주기적으로 하트 생성 (너무 많이 생성하지 않도록)
+    setInterval(() => {
+        if (heartsContainer.children.length < 15) {
+            createHeart();
+        }
+    }, 2000);
+}
+
+// 페이지 로드 후 하트 효과 시작
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createFallingHearts);
+} else {
+    createFallingHearts();
+}
 
