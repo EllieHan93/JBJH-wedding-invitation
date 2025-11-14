@@ -951,11 +951,11 @@ body {
 .contact-column {
     background: var(--white);
     border-radius: 16px;
-    padding: 45px 40px;
+    padding: 45px 50px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(74, 85, 104, 0.08);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 0;
+    min-width: 280px;
 }
 
 .contact-column:hover {
@@ -991,7 +991,7 @@ body {
 
 .contact-content {
     flex: 1;
-    min-width: 0;
+    min-width: 200px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -1006,9 +1006,9 @@ body {
     color: var(--text-color);
     margin-bottom: 15px;
     font-size: 1rem;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    word-wrap: normal;
+    overflow-wrap: normal;
     line-height: 1.6;
 }
 
