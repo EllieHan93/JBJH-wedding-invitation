@@ -828,7 +828,7 @@ function shareKakao() {
             description: description,
             imageUrl: imageUrl,
             imageWidth: 1200,
-            imageHeight: 1600,
+            imageHeight: 2000,
             link: {
                 mobileWebUrl: url,
                 webUrl: url,
