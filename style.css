@@ -1027,9 +1027,23 @@ body {
     color: var(--primary-color);
 }
 
+.parent-names {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact-name-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+}
+
 .contact-name {
     color: var(--text-color);
-    margin-bottom: 15px;
+    margin-bottom: 0;
     font-size: 1rem;
     white-space: nowrap;
     word-wrap: normal;
@@ -1100,8 +1114,9 @@ body {
 
 .parent-links {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 /* 마무리 섹션 */
