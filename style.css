@@ -1330,12 +1330,6 @@ body {
     animation: fall linear infinite;
     opacity: 1;
     user-select: none;
-    text-shadow: 
-        0 0 8px rgba(0, 0, 0, 0.8),
-        0 0 4px rgba(0, 0, 0, 0.6),
-        2px 2px 4px rgba(0, 0, 0, 0.5);
-    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
-    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes fall {

@@ -835,7 +835,7 @@ function createFallingHearts() {
         // 이모지가 이미 색상이 있으므로 color는 기본값 사용
         heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7초
         heart.style.animationDelay = Math.random() * 2 + 's';
-        heart.style.fontSize = (Math.random() * 10 + 20) + 'px'; // 20-30px (더 크게)
+        heart.style.fontSize = (Math.random() * 8 + 12) + 'px'; // 12-20px (작게)
         
         heartsContainer.appendChild(heart);
         
