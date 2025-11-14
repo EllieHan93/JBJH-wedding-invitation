@@ -370,6 +370,10 @@ function openKakaoTalk(url) {
     const phoneNumber = phoneMatch ? phoneMatch[1] : null;
     const kakaoId = idMatch ? idMatch[1] : null;
     
+    // profile 또는 chat 경로 확인
+    const isProfile = url.includes('kakaotalk://profile');
+    const isChat = url.includes('kakaotalk://chat');
+    
     // 전화번호를 하이픈 제거한 형식으로 정규화
     let normalizedPhone = phoneNumber ? phoneNumber.replace(/[-\s]/g, '') : null;
     
@@ -378,14 +382,21 @@ function openKakaoTalk(url) {
             // Android: 여러 방법 시도
             if (kakaoId) {
                 // 카카오톡 ID가 있으면 ID 기반 사용
-                // 방법 1: 일반 딥링크 시도
-                window.location.href = `kakaotalk://chat?id=${kakaoId}`;
-                
-                // 방법 2: Intent 스킴 (fallback)
-                setTimeout(function() {
-                    const intentUrl = `intent://chat?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
-                    window.location.href = intentUrl;
-                }, 300);
+                if (isProfile) {
+                    // 프로필 보기
+                    window.location.href = `kakaotalk://profile?id=${kakaoId}`;
+                    setTimeout(function() {
+                        const intentUrl = `intent://profile?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+                        window.location.href = intentUrl;
+                    }, 300);
+                } else {
+                    // 채팅방 열기
+                    window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+                    setTimeout(function() {
+                        const intentUrl = `intent://chat?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+                        window.location.href = intentUrl;
+                    }, 300);
+                }
             } else if (normalizedPhone) {
                 // 전화번호 기반 시도 (여러 형식)
                 // 방법 1: 일반 딥링크
@@ -402,7 +413,11 @@ function openKakaoTalk(url) {
         } else {
             // iOS: 직접 딥링크 사용
             if (kakaoId) {
-                window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+                if (isProfile) {
+                    window.location.href = `kakaotalk://profile?id=${kakaoId}`;
+                } else {
+                    window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+                }
             } else if (normalizedPhone) {
                 window.location.href = `kakaotalk://chat?phone=${normalizedPhone}`;
             } else {
@@ -416,7 +431,11 @@ function openKakaoTalk(url) {
     } else {
         // 데스크톱: 카카오톡 PC 버전 시도
         if (kakaoId) {
-            window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+            if (isProfile) {
+                window.location.href = `kakaotalk://profile?id=${kakaoId}`;
+            } else {
+                window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+            }
         } else if (normalizedPhone) {
             window.location.href = `kakaotalk://chat?phone=${normalizedPhone}`;
         } else {
