@@ -870,14 +870,20 @@ function createFallingHearts() {
     }
     
     function checkScrollPosition() {
-        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-        const scrollPosition = window.scrollY + window.innerHeight;
+        const heroRect = heroSection.getBoundingClientRect();
+        const heroBottom = heroRect.bottom;
+        const viewportHeight = window.innerHeight;
         
-        if (scrollPosition > heroBottom) {
+        // hero 섹션이 화면에서 완전히 벗어났는지 확인
+        // hero 섹션의 하단이 화면 상단보다 위에 있으면 (스크롤해서 지나감)
+        if (heroBottom < 0) {
             // hero 섹션을 지나면 하트 시작
             startHearts();
+        } else if (heroBottom > viewportHeight) {
+            // hero 섹션이 아직 화면에 있으면 하트 중지
+            stopHearts();
         } else {
-            // hero 섹션 안에 있으면 하트 중지
+            // hero 섹션이 화면에 일부라도 보이면 하트 중지
             stopHearts();
         }
     }
@@ -885,8 +891,13 @@ function createFallingHearts() {
     // 스크롤 이벤트로 확인
     window.addEventListener('scroll', checkScrollPosition, { passive: true });
     
-    // 초기 확인
-    checkScrollPosition();
+    // 리사이즈 이벤트도 확인 (화면 크기 변경 시)
+    window.addEventListener('resize', checkScrollPosition, { passive: true });
+    
+    // 초기 확인 (약간의 딜레이를 두고 확인)
+    setTimeout(() => {
+        checkScrollPosition();
+    }, 100);
 }
 
 // "We are getting married" 타이핑 애니메이션

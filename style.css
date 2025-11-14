@@ -58,8 +58,42 @@ img[loading="lazy"] {
     --shadow: rgba(0, 0, 0, 0.1);
 }
 
+/* Great Vibes 폰트 (로컬 파일) */
+@font-face {
+    font-family: 'Great Vibes';
+    src: url('font/great-vibes/GreatVibes-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 나눔명조 폰트 (로컬 파일) */
+@font-face {
+    font-family: 'Nanum Myeongjo';
+    src: url('font/great-vibes/nanum-myeongjo/NanumMyeongjo.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nanum Myeongjo';
+    src: url('font/great-vibes/nanum-myeongjo/NanumMyeongjoBold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nanum Myeongjo';
+    src: url('font/great-vibes/nanum-myeongjo/NanumMyeongjoExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
 body {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    font-family: 'Nanum Myeongjo', serif;
     color: var(--text-color);
     line-height: 1.6;
     overflow-x: hidden;
@@ -123,6 +157,36 @@ body {
     animation: fadeInUp 1s ease-out;
     padding: 20px;
     margin-top: 45vh;
+}
+
+.wedding-text {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5rem;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
+    min-height: 60px;
+}
+
+.wedding-text .char {
+    display: inline-block;
+    opacity: 0;
+    animation: fadeInChar 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInChar {
+    to {
+        opacity: 1;
+    }
 }
 
 .names {
@@ -1276,6 +1340,11 @@ body {
 
 /* 모바일에서 음악 플레이어 크기 조정 */
 @media (max-width: 768px) {
+    .wedding-text {
+        font-size: 2rem;
+        min-height: 50px;
+    }
+    
     .music-player {
         bottom: 15px;
         right: 15px;
