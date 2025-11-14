@@ -828,70 +828,6 @@ window.addEventListener('beforeunload', () => {
     window.removeEventListener('resize', optimizedResizeHandler);
 });
 
-// 떨어지는 하트 효과
-let heartsInterval = null;
-let isHeartsActive = false;
-
-function createFallingHearts() {
-    const heartsContainer = document.getElementById('fallingHearts');
-    if (!heartsContainer) return;
-    
-    const heartEmojis = ['🤍', '🖤', '❤️'];
-    
-    function createHeart() {
-        const heart = document.createElement('div');
-        heart.className = 'falling-heart';
-        
-        // 랜덤 이모지 선택
-        const randomEmoji = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-        
-        heart.textContent = randomEmoji;
-        heart.style.left = Math.random() * 100 + '%';
-        
-        // 이모지에 맞는 색상 설정 (이모지 자체 색상 사용)
-        // 이모지가 이미 색상이 있으므로 color는 기본값 사용
-        heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7초
-        heart.style.animationDelay = Math.random() * 2 + 's';
-        heart.style.fontSize = (Math.random() * 6 + 8) + 'px'; // 8-14px (더 작게)
-        
-        heartsContainer.appendChild(heart);
-        
-        // 애니메이션 종료 후 제거
-        setTimeout(() => {
-            heart.remove();
-        }, 8000);
-    }
-    
-    function startHearts() {
-        if (isHeartsActive) return;
-        isHeartsActive = true;
-        
-        // 초기 하트 생성
-        for (let i = 0; i < 8; i++) {
-            setTimeout(() => createHeart(), i * 500);
-        }
-        
-        // 주기적으로 하트 생성 (너무 많이 생성하지 않도록)
-        heartsInterval = setInterval(() => {
-            if (heartsContainer.children.length < 15) {
-                createHeart();
-            }
-        }, 2000);
-    }
-    
-    function stopHearts() {
-        if (!isHeartsActive) return;
-        isHeartsActive = false;
-        if (heartsInterval) {
-            clearInterval(heartsInterval);
-            heartsInterval = null;
-        }
-    }
-    
-    // 시작부터 하트 떨어뜨리기
-    startHearts();
-}
-
 // "We are getting married" 타이핑 애니메이션
 function typeWeddingText() {
     const weddingTextElement = document.getElementById('weddingText');
@@ -926,12 +862,5 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', typeWeddingText);
 } else {
     typeWeddingText();
-}
-
-// 페이지 로드 후 하트 효과 시작
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createFallingHearts);
-} else {
-    createFallingHearts();
 }
 
