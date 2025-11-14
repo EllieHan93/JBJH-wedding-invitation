@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="양진보 & 한정화 결혼합니다">
     <meta property="og:description" content="2026년 1월 4일 일요일 오후 12시 10분 마곡보타닉파크웨딩">
-    <meta property="og:image" content="https://elliehan93.github.io/JBJH-wedding-invitation/photos/hero.jpg">
+    <meta property="og:image" content="https://elliehan93.github.io/JBJH-wedding-invitation/photos/1.jpg">
     <meta property="og:url" content="https://elliehan93.github.io/JBJH-wedding-invitation/">
     <meta property="og:site_name" content="양진보 & 한정화 결혼합니다">
     
@@ -19,7 +19,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="양진보 & 한정화 결혼합니다">
     <meta name="twitter:description" content="2026년 1월 4일 일요일 오후 12시 10분 마곡보타닉파크웨딩">
-    <meta name="twitter:image" content="https://elliehan93.github.io/JBJH-wedding-invitation/photos/hero.jpg">
+    <meta name="twitter:image" content="https://elliehan93.github.io/JBJH-wedding-invitation/photos/1.jpg">
     
     <!-- 파비콘 -->
     <link rel="icon" type="image/jpeg" href="photos/hero.jpg">
@@ -28,10 +28,13 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     
-    <!-- Font with display swap for performance -->
-    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" crossorigin="anonymous" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" crossorigin="anonymous"></noscript>
+    <!-- Fonts -->
+    <!-- 나눔명조 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Great Vibes -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
     <!-- Preload critical resources -->
@@ -51,6 +54,7 @@
             <div class="image-loader" id="heroLoader"></div>
         </div>
         <div class="hero-content">
+            <div class="wedding-text" id="weddingText"></div>
             <div class="names">
                 <h1 class="groom-name">양진보</h1>
                 <div class="heart">💕</div>
@@ -275,10 +279,10 @@
                             <h3>신랑 부모님</h3>
                             <p class="contact-name">양태융 · 조미경</p>
                             <div class="parent-links">
-                                <a href="kakaotalk://chat?id=신랑아버지카카오톡아이디" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="아버지">
+                                <a href="kakaotalk://chat?phone=01052047528" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="아버지">
                                     <span class="kakao-icon">💬</span>
                                 </a>
-                                <a href="kakaotalk://chat?id=신랑어머니카카오톡아이디" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="어머니">
+                                <a href="kakaotalk://chat?phone=01090328528" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="어머니">
                                     <span class="kakao-icon">💬</span>
                                 </a>
                             </div>
@@ -289,7 +293,7 @@
                         <div class="contact-content">
                             <h3>신랑</h3>
                             <p class="contact-name">양진보</p>
-                            <a href="kakaotalk://chat?id=신랑카카오톡아이디" class="kakao-link" onclick="openKakaoTalk(this.href); return false;" title="축하메세지 보내기">
+                            <a href="kakaotalk://chat?phone=01094778528" class="kakao-link" onclick="openKakaoTalk(this.href); return false;" title="축하메세지 보내기">
                                 <span class="kakao-icon">💬</span>
                             </a>
                         </div>
@@ -303,10 +307,10 @@
                             <h3>신부 부모님</h3>
                             <p class="contact-name">한상문 · 이유영</p>
                             <div class="parent-links">
-                                <a href="kakaotalk://chat?id=신부아버지카카오톡아이디" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="아버지">
+                                <a href="kakaotalk://chat?phone=01038250179" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="아버지">
                                     <span class="kakao-icon">💬</span>
                                 </a>
-                                <a href="kakaotalk://chat?id=신부어머니카카오톡아이디" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="어머니">
+                                <a href="kakaotalk://chat?phone=01090716272" class="kakao-link small" onclick="openKakaoTalk(this.href); return false;" title="어머니">
                                     <span class="kakao-icon">💬</span>
                                 </a>
                             </div>
@@ -317,7 +321,7 @@
                         <div class="contact-content">
                             <h3>신부</h3>
                             <p class="contact-name">한정화</p>
-                            <a href="kakaotalk://chat?id=hjhyoyo" class="kakao-link" onclick="openKakaoTalk(this.href); return false;" title="축하메세지 보내기">
+                            <a href="kakaotalk://chat?phone=01040086272" class="kakao-link" onclick="openKakaoTalk(this.href); return false;" title="축하메세지 보내기">
                                 <span class="kakao-icon">💬</span>
                             </a>
                         </div>

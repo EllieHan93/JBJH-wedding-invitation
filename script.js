@@ -628,7 +628,7 @@ function shareKakao() {
     const url = window.location.href;
     const title = '💕 양진보 & 한정화 결혼합니다 💕';
     const description = '2026년 1월 4일 일요일 오후 12시 10분\n마곡보타닉파크웨딩\n\n저희 두 사람의 새로운 시작에\n소중한 분들이 함께해 주신다면\n그보다 큰 힘과 기쁨은 없을 것 같습니다.\n\n바쁘시더라도 참석해 주시어\n저희의 앞날을 따뜻하게 축복해 주시면\n더없는 기쁨이겠습니다.';
-    const imageUrl = 'https://elliehan93.github.io/JBJH-wedding-invitation/photos/hero.jpg';
+    const imageUrl = 'https://elliehan93.github.io/JBJH-wedding-invitation/photos/1.jpg';
     
     // 카카오톡 SDK가 초기화되어 있는지 확인
     if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
@@ -638,12 +638,15 @@ function shareKakao() {
     }
     
     // 카카오톡 공유 (기본 템플릿 사용)
+    // 이미지 URL을 직접 사용 (카카오톡이 자동으로 스크랩)
     Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
             title: title,
             description: description,
             imageUrl: imageUrl,
+            imageWidth: 1200,
+            imageHeight: 630,
             link: {
                 mobileWebUrl: url,
                 webUrl: url,
@@ -799,37 +802,27 @@ window.addEventListener('beforeunload', () => {
 });
 
 // 떨어지는 하트 효과
+let heartsInterval = null;
+let isHeartsActive = false;
+
 function createFallingHearts() {
     const heartsContainer = document.getElementById('fallingHearts');
     if (!heartsContainer) return;
     
-    // 빨강과 흰색 하트
-    const heartColors = [
-        '#FF0000', // 빨강
-        '#FFFFFF', // 흰색
-        '#FF3333', // 밝은 빨강
-        '#FFFFFF', // 흰색
-        '#CC0000', // 어두운 빨강
-        '#FFFFFF', // 흰색
-        '#FF0000', // 빨강
-        '#FFFFFF', // 흰색
-        '#FF6666', // 연한 빨강
-        '#FFFFFF'  // 흰색
-    ];
-    
-    const heartEmojis = ['💕', '💖', '💗', '💓', '💝', '💘', '💞', '💟', '❤️', '🧡'];
+    const heartEmojis = ['🤍', '🖤', '❤️'];
     
     function createHeart() {
         const heart = document.createElement('div');
         heart.className = 'falling-heart';
         
-        // 랜덤 색상과 이모지 선택
-        const randomColor = heartColors[Math.floor(Math.random() * heartColors.length)];
+        // 랜덤 이모지 선택
         const randomEmoji = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
         
         heart.textContent = randomEmoji;
         heart.style.left = Math.random() * 100 + '%';
-        heart.style.color = randomColor;
+        
+        // 이모지에 맞는 색상 설정 (이모지 자체 색상 사용)
+        // 이모지가 이미 색상이 있으므로 color는 기본값 사용
         heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7초
         heart.style.animationDelay = Math.random() * 2 + 's';
         heart.style.fontSize = (Math.random() * 10 + 15) + 'px'; // 15-25px
@@ -842,23 +835,93 @@ function createFallingHearts() {
         }, 8000);
     }
     
-    // 초기 하트 생성
-    for (let i = 0; i < 8; i++) {
-        setTimeout(() => createHeart(), i * 500);
+    function startHearts() {
+        if (isHeartsActive) return;
+        isHeartsActive = true;
+        
+        // 초기 하트 생성
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => createHeart(), i * 500);
+        }
+        
+        // 주기적으로 하트 생성 (너무 많이 생성하지 않도록)
+        heartsInterval = setInterval(() => {
+            if (heartsContainer.children.length < 15) {
+                createHeart();
+            }
+        }, 2000);
     }
     
-    // 주기적으로 하트 생성 (너무 많이 생성하지 않도록)
-    setInterval(() => {
-        if (heartsContainer.children.length < 15) {
-            createHeart();
+    function stopHearts() {
+        if (!isHeartsActive) return;
+        isHeartsActive = false;
+        if (heartsInterval) {
+            clearInterval(heartsInterval);
+            heartsInterval = null;
         }
-    }, 2000);
+    }
+    
+    // hero 섹션 높이 확인
+    const heroSection = document.querySelector('.hero');
+    if (!heroSection) {
+        // hero 섹션이 없으면 바로 시작
+        startHearts();
+        return;
+    }
+    
+    function checkScrollPosition() {
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const scrollPosition = window.scrollY + window.innerHeight;
+        
+        if (scrollPosition > heroBottom) {
+            // hero 섹션을 지나면 하트 시작
+            startHearts();
+        } else {
+            // hero 섹션 안에 있으면 하트 중지
+            stopHearts();
+        }
+    }
+    
+    // 스크롤 이벤트로 확인
+    window.addEventListener('scroll', checkScrollPosition, { passive: true });
+    
+    // 초기 확인
+    checkScrollPosition();
 }
 
-// 페이지 로드 후 하트 효과 시작
+// "We are getting married" 타이핑 애니메이션
+function typeWeddingText() {
+    const weddingTextElement = document.getElementById('weddingText');
+    if (!weddingTextElement) return;
+    
+    const text = 'We are getting married';
+    const chars = text.split('');
+    let index = 0;
+    
+    function typeChar() {
+        if (index < chars.length) {
+            const char = chars[index];
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = char === ' ' ? '\u00A0' : char; // 공백 처리
+            span.style.animationDelay = (index * 0.08) + 's'; // 각 글자마다 0.08초 간격
+            weddingTextElement.appendChild(span);
+            index++;
+            setTimeout(typeChar, 80); // 80ms마다 다음 글자 (너무 느리지 않게)
+        }
+    }
+    
+    // 약간의 딜레이 후 시작
+    setTimeout(() => {
+        weddingTextElement.style.opacity = '1';
+        typeChar();
+    }, 300);
+}
+
+// 페이지 로드 후 타이핑 애니메이션 시작
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createFallingHearts);
+    document.addEventListener('DOMContentLoaded', typeWeddingText);
 } else {
-    createFallingHearts();
+    typeWeddingText();
 }
 
