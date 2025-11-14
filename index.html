@@ -214,9 +214,14 @@
                                 </ul>
                             </div>
                         </div>
-                        <a href="https://map.naver.com/v5/directions/-/14118322.736132536,4518490.688047096,%EB%B3%B4%ED%83%80%EB%8B%89%ED%8C%8C%ED%81%AC%EC%9B%A8%EB%94%A9,94306527,PLACE_POI/-/transit?c=14118322.7361325,4518490.6880471,15,0,0,0,dh" target="_blank" class="naver-map-link">
-                            <span class="map-icon">🗺️</span> 네이버 지도로 길찾기
-                        </a>
+                        <div class="map-links">
+                            <a href="https://map.naver.com/v5/directions/-/14118322.736132536,4518490.688047096,%EB%B3%B4%ED%83%80%EB%8B%89%ED%8C%8C%ED%81%AC%EC%9B%A8%EB%94%A9,94306527,PLACE_POI/-/transit?c=14118322.7361325,4518490.6880471,15,0,0,0,dh" target="_blank" class="map-link">
+                                <span class="map-icon">🗺️</span> 네이버 지도로 길찾기
+                            </a>
+                            <a href="https://map.kakao.com/link/map/보타닉파크웨딩,37.5665,126.8260" target="_blank" class="map-link">
+                                <span class="map-icon">📍</span> 카카오맵으로 길찾기
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -369,16 +374,9 @@
     -->
     <div class="music-player" id="musicPlayer">
         <audio id="backgroundMusic" loop preload="auto" autoplay>
-            <!-- 외부 스토리지 음악 파일 링크 -->
-            <!-- 
-                설정 방법:
-                1. Google Drive: https://drive.google.com/uc?export=download&id=FILE_ID
-                2. Dropbox: https://www.dropbox.com/s/xxxxx/music.mp3?dl=1
-                3. 다른 호스팅: https://yourdomain.com/music.mp3
-                
-                아래 src 속성에 링크를 붙여넣으세요.
-            -->
-            <source src="https://drive.google.com/uc?export=download&id=1MjsCkmY4Svy-Nzk4Hwtcn-hNXI8RNIRj" type="audio/mpeg" id="musicSource">
+            <!-- GitHub Pages 음악 파일 (JavaScript로 동적 로드하여 직접 링크 노출 최소화) -->
+            <!-- 파일명을 복잡하게 하여 직접 접근을 어렵게 함 -->
+            <source src="" type="audio/mpeg" id="musicSource">
             음악 파일을 지원하지 않는 브라우저입니다.
         </audio>
         <button class="music-toggle" id="musicToggle" aria-label="음악 재생/일시정지">
