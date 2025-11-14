@@ -336,37 +336,47 @@ function openKakaoTalk(url) {
     const isIOS = /iphone|ipad|ipod/i.test(userAgent.toLowerCase());
     const isAndroid = /android/i.test(userAgent.toLowerCase());
     
+    // URL에서 phone 파라미터 추출
+    const phoneMatch = url.match(/phone=([^&]+)/);
+    const phoneNumber = phoneMatch ? phoneMatch[1] : null;
+    
     if (isMobile) {
-        if (isAndroid) {
-            // Android: Intent 스킴도 시도
-            const kakaoId = url.match(/id=([^&]+)/)?.[1];
-            if (kakaoId) {
-                const intentUrl = `intent://send?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
-                window.location.href = intentUrl;
-                
-                // Intent가 실패하면 일반 딥링크 시도
-                setTimeout(function() {
-                    window.location.href = url;
-                }, 500);
-            } else {
+        if (isAndroid && phoneNumber) {
+            // Android: Intent 스킴 사용 (전화번호 기반)
+            const intentUrl = `intent://send?phone=${phoneNumber}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+            
+            // Intent 시도
+            window.location.href = intentUrl;
+            
+            // Intent가 실패하면 일반 딥링크 시도
+            setTimeout(function() {
                 window.location.href = url;
-            }
+            }, 500);
         } else {
-            // iOS: 직접 딥링크 사용
+            // iOS 또는 일반 딥링크: 직접 딥링크 사용
             window.location.href = url;
         }
         
         // 카카오톡 앱이 없을 경우를 대비해 타임아웃 설정
-        setTimeout(function() {
-            // 앱이 열리지 않으면 카카오톡 다운로드 페이지로 이동
-            if (confirm('카카오톡 앱이 설치되어 있지 않습니다. 다운로드 페이지로 이동하시겠습니까?')) {
-                if (isIOS) {
-                    window.open('https://apps.apple.com/kr/app/id369057857', '_blank');
-                } else {
-                    window.open('https://play.google.com/store/apps/details?id=com.kakao.talk', '_blank');
+        let appOpened = false;
+        const checkApp = setTimeout(function() {
+            if (!appOpened) {
+                // 앱이 열리지 않으면 카카오톡 다운로드 페이지로 이동
+                if (confirm('카카오톡 앱이 설치되어 있지 않습니다. 다운로드 페이지로 이동하시겠습니까?')) {
+                    if (isIOS) {
+                        window.open('https://apps.apple.com/kr/app/id369057857', '_blank');
+                    } else {
+                        window.open('https://play.google.com/store/apps/details?id=com.kakao.talk', '_blank');
+                    }
                 }
             }
-        }, 1000);
+        }, 1500);
+        
+        // 페이지가 포커스를 잃으면 앱이 열린 것으로 간주
+        window.addEventListener('blur', function() {
+            appOpened = true;
+            clearTimeout(checkApp);
+        });
     } else {
         // 데스크톱: 카카오톡 PC 버전 시도 (설치되어 있으면 열림)
         window.location.href = url;
