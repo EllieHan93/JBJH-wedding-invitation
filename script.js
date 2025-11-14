@@ -450,12 +450,73 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-// 공유하기 기능
+// 카카오톡 SDK 초기화
+function initKakaoSDK() {
+    // 카카오톡 앱 키 설정 (Kakao Developers에서 발급받은 JavaScript 키)
+    const KAKAO_APP_KEY = '59c7dfd20241f85002ac497cd3de1e11';
+    
+    if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
+        Kakao.init(KAKAO_APP_KEY);
+        console.log('카카오톡 SDK 초기화 완료');
+    }
+}
+
+// 페이지 로드 시 카카오톡 SDK 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initKakaoSDK);
+} else {
+    initKakaoSDK();
+}
+
+// 공유하기 기능 (카카오톡 공식 SDK 사용)
 function shareKakao() {
     const url = window.location.href;
     const title = '양진보 & 한정화 결혼합니다';
     const description = '2026년 1월 4일 일요일 오후 12시 10분';
+    const imageUrl = 'https://elliehan93.github.io/JBJH-wedding-invitation/photos/hero.jpg';
     
+    // 카카오톡 SDK가 초기화되어 있는지 확인
+    if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+        alert('카카오톡 SDK가 초기화되지 않았습니다. 앱 키를 확인해주세요.');
+        console.error('카카오톡 SDK 초기화 필요');
+        return;
+    }
+    
+    // 카카오톡 공유 (기본 템플릿 사용)
+    Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+            title: title,
+            description: description,
+            imageUrl: imageUrl,
+            link: {
+                mobileWebUrl: url,
+                webUrl: url,
+            },
+        },
+        buttons: [
+            {
+                title: '청첩장 보기',
+                link: {
+                    mobileWebUrl: url,
+                    webUrl: url,
+                },
+            },
+        ],
+        // 카카오톡 공유 성공 시 콜백 (선택사항)
+        success: function(response) {
+            console.log('카카오톡 공유 성공:', response);
+        },
+        fail: function(error) {
+            console.error('카카오톡 공유 실패:', error);
+            // 실패 시 대체 방법 시도
+            fallbackKakaoShare(url, title, description);
+        },
+    });
+}
+
+// 카카오톡 링크 공유 (대체 방법 - SDK 사용 불가 시)
+function fallbackKakaoShare(url, title, description) {
     // Web Share API 사용 (모바일에서 카카오톡 앱으로 공유)
     if (navigator.share) {
         navigator.share({
@@ -466,29 +527,13 @@ function shareKakao() {
             console.log('공유 성공');
         }).catch((error) => {
             console.log('공유 실패:', error);
-            // Web Share API 실패 시 카카오톡 링크 공유로 대체
-            fallbackKakaoShare(url, title, description);
+            // 최종 대체: 카카오톡 링크 공유 페이지
+            const shareUrl = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title + ' - ' + description)}`;
+            window.open(shareUrl, '_blank', 'width=600,height=700');
         });
     } else {
-        // Web Share API를 지원하지 않는 경우 카카오톡 링크 공유
-        fallbackKakaoShare(url, title, description);
-    }
-}
-
-// 카카오톡 링크 공유 (대체 방법)
-function fallbackKakaoShare(url, title, description) {
-    // 카카오톡 채팅방으로 공유하는 링크
-    const shareUrl = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title + ' - ' + description)}`;
-    
-    // 모바일인지 확인
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-    
-    if (isMobile) {
-        // 모바일에서는 카카오톡 앱으로 직접 열기 시도
-        window.location.href = shareUrl;
-    } else {
-        // 데스크톱에서는 새 창으로 열기
+        // 카카오톡 링크 공유 페이지
+        const shareUrl = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title + ' - ' + description)}`;
         window.open(shareUrl, '_blank', 'width=600,height=700');
     }
 }
