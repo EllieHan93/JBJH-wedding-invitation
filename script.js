@@ -253,15 +253,23 @@ function checkMusicFile() {
     
     // 음악 소스 URL 확인
     const musicSource = document.getElementById('musicSource');
-    const musicUrl = musicSource ? musicSource.src : '';
+    
+    // GitHub Pages 음악 파일 URL (동적으로 설정하여 직접 링크 노출 최소화)
+    // 파일명을 복잡하게 하여 직접 접근을 어렵게 함
+    const musicUrl = 'https://elliehan93.github.io/JBJH-wedding-invitation/music_2026_wedding_bg_audio.mp3';
     
     // 음악 URL이 없으면 플레이어 숨기기
     if (!musicUrl || musicUrl.trim() === '') {
         if (musicPlayer) {
             musicPlayer.style.display = 'none';
         }
-        console.log('음악 파일 URL이 설정되지 않았습니다. index.html에서 외부 스토리지 링크를 설정해주세요.');
+        console.log('음악 파일 URL이 설정되지 않았습니다.');
         return;
+    }
+    
+    // 동적으로 음악 소스 설정 (직접 HTML에 노출되지 않음)
+    if (musicSource) {
+        musicSource.src = musicUrl;
     }
     
     // 플레이어 표시
