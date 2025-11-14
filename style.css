@@ -514,18 +514,18 @@ body {
 .parents {
     display: flex;
     justify-content: space-around;
-    gap: 30px;
+    gap: 15px;
     margin-top: 50px;
 }
 
 .parent-group {
     text-align: center;
-    padding: 25px 50px;
+    padding: 25px 30px;
     border-radius: 12px;
     background: transparent;
     border: 1px solid rgba(74, 85, 104, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 250px;
+    min-width: 200px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
