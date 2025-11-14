@@ -189,24 +189,52 @@ if (document.readyState === 'loading') {
 
 // 카카오톡 링크 열기
 function openKakaoTalk(url) {
-    // 모바일에서 카카오톡 앱 열기 시도
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+    const isIOS = /iphone|ipad|ipod/i.test(userAgent.toLowerCase());
+    const isAndroid = /android/i.test(userAgent.toLowerCase());
     
     if (isMobile) {
-        // 모바일에서는 직접 카카오톡 앱 열기
-        window.location.href = url;
+        if (isAndroid) {
+            // Android: Intent 스킴도 시도
+            const kakaoId = url.match(/id=([^&]+)/)?.[1];
+            if (kakaoId) {
+                const intentUrl = `intent://send?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+                window.location.href = intentUrl;
+                
+                // Intent가 실패하면 일반 딥링크 시도
+                setTimeout(function() {
+                    window.location.href = url;
+                }, 500);
+            } else {
+                window.location.href = url;
+            }
+        } else {
+            // iOS: 직접 딥링크 사용
+            window.location.href = url;
+        }
         
         // 카카오톡 앱이 없을 경우를 대비해 타임아웃 설정
         setTimeout(function() {
             // 앱이 열리지 않으면 카카오톡 다운로드 페이지로 이동
             if (confirm('카카오톡 앱이 설치되어 있지 않습니다. 다운로드 페이지로 이동하시겠습니까?')) {
+                if (isIOS) {
+                    window.open('https://apps.apple.com/kr/app/id369057857', '_blank');
+                } else {
+                    window.open('https://play.google.com/store/apps/details?id=com.kakao.talk', '_blank');
+                }
+            }
+        }, 1000);
+    } else {
+        // 데스크톱: 카카오톡 PC 버전 시도 (설치되어 있으면 열림)
+        window.location.href = url;
+        
+        // PC 버전이 없을 경우 안내
+        setTimeout(function() {
+            if (confirm('카카오톡 PC 버전이 설치되어 있지 않을 수 있습니다.\n카카오톡 다운로드 페이지로 이동하시겠습니까?')) {
                 window.open('https://www.kakaocorp.com/service/KakaoTalk', '_blank');
             }
         }, 500);
-    } else {
-        // 데스크톱에서는 카카오톡 PC 버전 또는 웹 버전 안내
-        alert('모바일에서 카카오톡 앱을 통해 연락해주세요.');
     }
 }
 
@@ -428,24 +456,40 @@ function shareKakao() {
     const title = '양진보 & 한정화 결혼합니다';
     const description = '2026년 1월 4일 일요일 오후 12시 10분';
     
-    // 카카오톡 공유 (Kakao SDK 필요하지만, 간단한 방법으로 대체)
-    if (window.Kakao) {
-        window.Kakao.Share.sendDefault({
-            objectType: 'feed',
-            content: {
-                title: title,
-                description: description,
-                imageUrl: window.location.origin + '/og-image.jpg', // OG 이미지 URL
-                link: {
-                    mobileWebUrl: url,
-                    webUrl: url,
-                },
-            },
+    // Web Share API 사용 (모바일에서 카카오톡 앱으로 공유)
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            text: description,
+            url: url
+        }).then(() => {
+            console.log('공유 성공');
+        }).catch((error) => {
+            console.log('공유 실패:', error);
+            // Web Share API 실패 시 카카오톡 링크 공유로 대체
+            fallbackKakaoShare(url, title, description);
         });
     } else {
-        // 카카오톡 링크 공유 (간단한 방법)
-        const shareUrl = `https://story.kakao.com/share?url=${encodeURIComponent(url)}`;
-        window.open(shareUrl, '_blank');
+        // Web Share API를 지원하지 않는 경우 카카오톡 링크 공유
+        fallbackKakaoShare(url, title, description);
+    }
+}
+
+// 카카오톡 링크 공유 (대체 방법)
+function fallbackKakaoShare(url, title, description) {
+    // 카카오톡 채팅방으로 공유하는 링크
+    const shareUrl = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title + ' - ' + description)}`;
+    
+    // 모바일인지 확인
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+    
+    if (isMobile) {
+        // 모바일에서는 카카오톡 앱으로 직접 열기 시도
+        window.location.href = shareUrl;
+    } else {
+        // 데스크톱에서는 새 창으로 열기
+        window.open(shareUrl, '_blank', 'width=600,height=700');
     }
 }
 
