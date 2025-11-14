@@ -513,10 +513,13 @@ body {
 
 .parents {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     gap: 20px;
     margin-top: 50px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .parent-group {
@@ -526,11 +529,10 @@ body {
     background: transparent;
     border: 1px solid rgba(74, 85, 104, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 180px;
-    max-width: 220px;
+    flex: 1 1 0;
+    min-width: 0;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    flex: 0 1 auto;
 }
 
 .parent-group:hover {
