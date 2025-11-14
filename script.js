@@ -471,8 +471,8 @@ if (document.readyState === 'loading') {
 // 공유하기 기능 (카카오톡 공식 SDK 사용)
 function shareKakao() {
     const url = window.location.href;
-    const title = '양진보 & 한정화 결혼합니다';
-    const description = '2026년 1월 4일 일요일 오후 12시 10분';
+    const title = '💕 양진보 & 한정화 결혼합니다 💕';
+    const description = '2026년 1월 4일 일요일 오후 12시 10분\n마곡보타닉파크웨딩\n\n저희 두 사람의 새로운 시작에\n소중한 분들이 함께해 주신다면\n그보다 큰 힘과 기쁨은 없을 것 같습니다.\n\n바쁘시더라도 참석해 주시어\n저희의 앞날을 따뜻하게 축복해 주시면\n더없는 기쁨이겠습니다.';
     const imageUrl = 'https://elliehan93.github.io/JBJH-wedding-invitation/photos/hero.jpg';
     
     // 카카오톡 SDK가 초기화되어 있는지 확인
