@@ -336,57 +336,74 @@ function openKakaoTalk(url) {
     const isIOS = /iphone|ipad|ipod/i.test(userAgent.toLowerCase());
     const isAndroid = /android/i.test(userAgent.toLowerCase());
     
-    // URL에서 phone 파라미터 추출
+    // URL에서 phone 또는 id 파라미터 추출
     const phoneMatch = url.match(/phone=([^&]+)/);
+    const idMatch = url.match(/[?&]id=([^&]+)/);
     const phoneNumber = phoneMatch ? phoneMatch[1] : null;
+    const kakaoId = idMatch ? idMatch[1] : null;
+    
+    // 전화번호를 하이픈 제거한 형식으로 정규화
+    let normalizedPhone = phoneNumber ? phoneNumber.replace(/[-\s]/g, '') : null;
     
     if (isMobile) {
-        if (isAndroid && phoneNumber) {
-            // Android: Intent 스킴 사용 (전화번호 기반)
-            const intentUrl = `intent://send?phone=${phoneNumber}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
-            
-            // Intent 시도
-            window.location.href = intentUrl;
-            
-            // Intent가 실패하면 일반 딥링크 시도
-            setTimeout(function() {
+        if (isAndroid) {
+            // Android: 여러 방법 시도
+            if (kakaoId) {
+                // 카카오톡 ID가 있으면 ID 기반 사용
+                const intentUrl = `intent://send?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+                window.location.href = intentUrl;
+            } else if (normalizedPhone) {
+                // 전화번호 기반 시도 (여러 형식)
+                // 방법 1: 일반 딥링크
+                window.location.href = `kakaotalk://chat?phone=${normalizedPhone}`;
+                
+                // 방법 2: Intent 스킴 (fallback)
+                setTimeout(function() {
+                    const intentUrl = `intent://send?phone=${normalizedPhone}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+                    window.location.href = intentUrl;
+                }, 300);
+            } else {
                 window.location.href = url;
-            }, 500);
+            }
         } else {
-            // iOS 또는 일반 딥링크: 직접 딥링크 사용
-            window.location.href = url;
+            // iOS: 직접 딥링크 사용
+            if (kakaoId) {
+                window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+            } else if (normalizedPhone) {
+                window.location.href = `kakaotalk://chat?phone=${normalizedPhone}`;
+            } else {
+                window.location.href = url;
+            }
         }
         
         // 카카오톡 앱이 없을 경우를 대비해 타임아웃 설정
         let appOpened = false;
         const checkApp = setTimeout(function() {
             if (!appOpened) {
-                // 앱이 열리지 않으면 카카오톡 다운로드 페이지로 이동
-                if (confirm('카카오톡 앱이 설치되어 있지 않습니다. 다운로드 페이지로 이동하시겠습니까?')) {
-                    if (isIOS) {
-                        window.open('https://apps.apple.com/kr/app/id369057857', '_blank');
-                    } else {
-                        window.open('https://play.google.com/store/apps/details?id=com.kakao.talk', '_blank');
-                    }
-                }
+                // 앱이 열리지 않으면 안내
+                alert('카카오톡 앱이 설치되어 있지 않거나, 해당 사용자를 찾을 수 없습니다.\n카카오톡에서 직접 검색해 주세요.');
             }
-        }, 1500);
+        }, 2000);
         
         // 페이지가 포커스를 잃으면 앱이 열린 것으로 간주
         window.addEventListener('blur', function() {
             appOpened = true;
             clearTimeout(checkApp);
-        });
+        }, { once: true });
     } else {
-        // 데스크톱: 카카오톡 PC 버전 시도 (설치되어 있으면 열림)
-        window.location.href = url;
+        // 데스크톱: 카카오톡 PC 버전 시도
+        if (kakaoId) {
+            window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+        } else if (normalizedPhone) {
+            window.location.href = `kakaotalk://chat?phone=${normalizedPhone}`;
+        } else {
+            window.location.href = url;
+        }
         
         // PC 버전이 없을 경우 안내
         setTimeout(function() {
-            if (confirm('카카오톡 PC 버전이 설치되어 있지 않을 수 있습니다.\n카카오톡 다운로드 페이지로 이동하시겠습니까?')) {
-                window.open('https://www.kakaocorp.com/service/KakaoTalk', '_blank');
-            }
-        }, 500);
+            alert('카카오톡 PC 버전이 설치되어 있지 않거나, 해당 사용자를 찾을 수 없습니다.\n카카오톡에서 직접 검색해 주세요.');
+        }, 1000);
     }
 }
 
