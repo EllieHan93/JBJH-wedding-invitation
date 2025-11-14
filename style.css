@@ -520,12 +520,12 @@ body {
 
 .parent-group {
     text-align: center;
-    padding: 25px 40px;
+    padding: 25px 50px;
     border-radius: 12px;
     background: transparent;
     border: 1px solid rgba(74, 85, 104, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 200px;
+    min-width: 250px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -546,9 +546,9 @@ body {
 
 .parent-group p {
     margin-bottom: 5px;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    word-wrap: normal;
+    overflow-wrap: normal;
     line-height: 1.6;
 }
 
