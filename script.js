@@ -223,7 +223,20 @@ let musicFileLoaded = false;
 function checkMusicFile() {
     if (!backgroundMusic) return;
     
-    // 플레이어는 항상 표시 (에러가 있어도 사용자가 확인할 수 있도록)
+    // 음악 소스 URL 확인
+    const musicSource = document.getElementById('musicSource');
+    const musicUrl = musicSource ? musicSource.src : '';
+    
+    // 음악 URL이 없으면 플레이어 숨기기
+    if (!musicUrl || musicUrl.trim() === '') {
+        if (musicPlayer) {
+            musicPlayer.style.display = 'none';
+        }
+        console.log('음악 파일 URL이 설정되지 않았습니다. index.html에서 외부 스토리지 링크를 설정해주세요.');
+        return;
+    }
+    
+    // 플레이어 표시
     if (musicPlayer) {
         musicPlayer.style.display = 'flex';
     }

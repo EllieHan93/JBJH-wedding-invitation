@@ -369,9 +369,16 @@
     -->
     <div class="music-player" id="musicPlayer">
         <audio id="backgroundMusic" loop preload="auto" autoplay>
-            <!-- GitHub Pages 음악 파일 -->
-            <source src="https://elliehan93.github.io/JBJH-wedding-invitation/music.mp3" type="audio/mpeg" id="musicSource">
-            <source src="https://elliehan93.github.io/JBJH-wedding-invitation/music.ogg" type="audio/ogg">
+            <!-- 외부 스토리지 음악 파일 링크 -->
+            <!-- 
+                설정 방법:
+                1. Google Drive: https://drive.google.com/uc?export=download&id=FILE_ID
+                2. Dropbox: https://www.dropbox.com/s/xxxxx/music.mp3?dl=1
+                3. 다른 호스팅: https://yourdomain.com/music.mp3
+                
+                아래 src 속성에 링크를 붙여넣으세요.
+            -->
+            <source src="https://drive.google.com/uc?export=download&id=1MjsCkmY4Svy-Nzk4Hwtcn-hNXI8RNIRj" type="audio/mpeg" id="musicSource">
             음악 파일을 지원하지 않는 브라우저입니다.
         </audio>
         <button class="music-toggle" id="musicToggle" aria-label="음악 재생/일시정지">
