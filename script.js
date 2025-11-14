@@ -446,23 +446,30 @@ function openKakaoTalk(url) {
     }
 }
 
-// 전화번호 복사 기능
+// 전화번호 복사 기능 (전화 앱도 열 수 있도록)
 function copyPhoneNumber(phoneNumber, event) {
-    event.preventDefault();
+    // 모바일에서는 전화 앱이 자동으로 열리므로 preventDefault 하지 않음
+    // 데스크톱에서만 복사 기능 사용
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
     
-    // 클립보드에 복사
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(phoneNumber).then(() => {
-            // 복사 성공 알림
-            showCopyNotification(phoneNumber + ' 복사되었습니다');
-        }).catch(() => {
-            // 복사 실패 시 대체 방법
+    if (!isMobile) {
+        event.preventDefault();
+        
+        // 클립보드에 복사
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(phoneNumber).then(() => {
+                // 복사 성공 알림
+                showCopyNotification(phoneNumber + ' 복사되었습니다');
+            }).catch(() => {
+                // 복사 실패 시 대체 방법
+                fallbackCopyPhoneNumber(phoneNumber);
+            });
+        } else {
+            // 클립보드 API를 지원하지 않는 경우 대체 방법
             fallbackCopyPhoneNumber(phoneNumber);
-        });
-    } else {
-        // 클립보드 API를 지원하지 않는 경우 대체 방법
-        fallbackCopyPhoneNumber(phoneNumber);
+        }
     }
+    // 모바일에서는 tel: 링크가 자동으로 전화 앱을 열므로 그대로 진행
 }
 
 // 전화번호 복사 대체 방법
@@ -509,6 +516,50 @@ function showCopyNotification(message) {
             }
         }, 300);
     }, 2000);
+}
+
+// 계좌번호 복사 함수
+function copyAccountNumber(parentName, accountNumber, event) {
+    event.preventDefault();
+    
+    // 계좌번호가 기본값이면 사용자에게 입력 요청
+    if (accountNumber === '계좌번호를 입력해주세요') {
+        const input = prompt(`${parentName}의 계좌번호를 입력해주세요:\n(예: 국민은행 123456-78-901234)`, '');
+        if (!input || input.trim() === '') {
+            return;
+        }
+        accountNumber = input.trim();
+    }
+    
+    // 클립보드에 복사
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(accountNumber).then(() => {
+            showCopyNotification(`${parentName} 계좌번호 복사되었습니다`);
+        }).catch(() => {
+            fallbackCopyAccountNumber(accountNumber, parentName);
+        });
+    } else {
+        fallbackCopyAccountNumber(accountNumber, parentName);
+    }
+}
+
+// 계좌번호 복사 대체 방법
+function fallbackCopyAccountNumber(accountNumber, parentName) {
+    const textArea = document.createElement('textarea');
+    textArea.value = accountNumber;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopyNotification(`${parentName} 계좌번호 복사되었습니다`);
+    } catch (err) {
+        showCopyNotification('계좌번호 복사에 실패했습니다');
+    }
+    document.body.removeChild(textArea);
 }
 
 // 음악 플레이어 기능 (지연 로딩)
