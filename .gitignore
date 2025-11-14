@@ -1,0 +1,27 @@
+# 음악 파일 (저작권 보호)
+*.mp3
+*.ogg
+*.wav
+*.m4a
+*.aac
+
+# 음악 파일 (특정 파일명)
+music.mp3
+music.ogg
+Lukas Graham - Love Someone.mp3
+
+# 환경 설정 파일
+.env
+.env.local
+
+# 에디터 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS 파일
+.DS_Store
+Thumbs.db
+

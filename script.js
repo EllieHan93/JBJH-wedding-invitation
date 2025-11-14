@@ -56,30 +56,44 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// 스크롤 애니메이션 (개선)
+// 스크롤 애니메이션 (성능 최적화)
 const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -100px 0px'
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
 };
 
+let animationFrameId = null;
 const observer = new IntersectionObserver(function(entries) {
-    entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-            // 각 요소에 약간의 딜레이를 주어 순차적으로 나타나게 함
-            setTimeout(() => {
+    // requestAnimationFrame으로 성능 최적화
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+    }
+    
+    animationFrameId = requestAnimationFrame(() => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-            }, index * 50);
-            observer.unobserve(entry.target); // 한 번만 실행
-        }
+                observer.unobserve(entry.target); // 한 번만 실행
+            }
+        });
     });
 }, observerOptions);
 
-// 애니메이션 적용할 요소들
-const animateElements = document.querySelectorAll('.greeting, .gallery, .wedding-info, .contact, .closing, .main-photo, .thumbnail-item, .info-item, .contact-item, .parent-group');
-animateElements.forEach(el => {
-    el.classList.add('fade-in');
-    observer.observe(el);
-});
+// 애니메이션 적용할 요소들 (지연 로딩)
+function initScrollAnimations() {
+    const animateElements = document.querySelectorAll('.greeting, .gallery, .wedding-info, .contact, .closing, .main-photo, .thumbnail-item, .info-item, .contact-item, .parent-group');
+    animateElements.forEach(el => {
+        el.classList.add('fade-in');
+        observer.observe(el);
+    });
+}
+
+// 페이지 로드 후 애니메이션 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollAnimations);
+} else {
+    initScrollAnimations();
+}
 
 // 부드러운 스크롤
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -171,55 +185,7 @@ if (document.readyState === 'loading') {
     setupImageLoaders();
 }
 
-// 카카오맵 초기화
-function initMap() {
-    // 주소를 여기에 입력하세요 (예: '서울특별시 강남구 테헤란로 152')
-    const address = '서울 강서구 마곡중앙5로 6';
-    
-    // 카카오맵 API가 로드되었는지 확인
-    if (typeof kakao === 'undefined' || !kakao.maps) {
-        console.log('카카오맵 API를 로드할 수 없습니다. API 키를 확인해주세요.');
-        return;
-    }
-    
-    const mapContainer = document.getElementById('map');
-    if (!mapContainer) return;
-    
-    // 주소로 좌표 검색
-    const geocoder = new kakao.maps.services.Geocoder();
-    
-    geocoder.addressSearch(address, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-            
-            // 지도 생성
-            const map = new kakao.maps.Map(mapContainer, {
-                center: coords,
-                level: 3 // 지도 확대 레벨 (1-14, 숫자가 작을수록 확대)
-            });
-            
-            // 마커 생성
-            const marker = new kakao.maps.Marker({
-                position: coords,
-                map: map
-            });
-            
-            // 인포윈도우 생성
-            const infowindow = new kakao.maps.InfoWindow({
-                content: '<div style="width:180px;text-align:center;padding:6px 0;">마곡보타닉파크웨딩</div>'
-            });
-            infowindow.open(map, marker);
-        } else {
-            // 주소 검색 실패 시 기본 위치 (서울시청)
-            const defaultCoords = new kakao.maps.LatLng(37.5665, 126.9780);
-            const map = new kakao.maps.Map(mapContainer, {
-                center: defaultCoords,
-                level: 3
-            });
-            console.log('주소를 찾을 수 없습니다. 주소를 확인해주세요.');
-        }
-    });
-}
+// 카카오맵 초기화 (지도 사용하지 않으므로 제거됨)
 
 // 카카오톡 링크 열기
 function openKakaoTalk(url) {
@@ -244,40 +210,71 @@ function openKakaoTalk(url) {
     }
 }
 
-// 음악 플레이어 기능
+// 음악 플레이어 기능 (지연 로딩)
 const backgroundMusic = document.getElementById('backgroundMusic');
 const musicToggle = document.getElementById('musicToggle');
+const musicPlayer = document.getElementById('musicPlayer');
 const musicIcon = musicToggle ? musicToggle.querySelector('.music-icon') : null;
+
+// 음악 파일 존재 여부 확인 (지연 로딩)
+function checkMusicFile() {
+    if (!backgroundMusic) return;
+    
+    // 외부 스토리지 링크 사용 시 음악 소스에서 URL 가져오기
+    const musicSource = document.getElementById('musicSource');
+    const musicUrl = musicSource ? musicSource.src : 'music.mp3';
+    
+    // 음악 파일이 있는지 확인
+    const audio = new Audio();
+    audio.src = musicUrl;
+    audio.preload = 'none';
+    
+    audio.addEventListener('canplaythrough', function() {
+        // 음악 파일이 있으면 플레이어 표시
+        if (musicPlayer) {
+            musicPlayer.style.display = 'flex';
+        }
+    }, { once: true });
+    
+    audio.addEventListener('error', function() {
+        // 음악 파일이 없으면 플레이어 숨기기
+        if (musicPlayer) {
+            musicPlayer.style.display = 'none';
+        }
+    }, { once: true });
+    
+    // 실제로 로드 시도 (에러 발생 시 숨김)
+    audio.load();
+}
+
+// 페이지 로드 완료 후 음악 파일 확인 (지연)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(checkMusicFile, 2000); // 2초 후 확인
+    });
+} else {
+    setTimeout(checkMusicFile, 2000);
+}
 
 // 자동 재생 시도 함수
 function tryAutoPlay() {
-    if (backgroundMusic) {
-        backgroundMusic.volume = 0.5; // 볼륨 50%로 설정
+    if (backgroundMusic && musicPlayer && musicPlayer.style.display !== 'none') {
+        backgroundMusic.volume = 0.5;
         backgroundMusic.play().then(() => {
             if (musicToggle) musicToggle.classList.add('playing');
             if (musicIcon) musicIcon.textContent = '⏸️';
         }).catch(error => {
-            // 자동 재생 실패 시 조용히 처리 (브라우저 정책)
-            console.log('자동 재생 실패 (사용자 인터랙션 필요):', error);
+            // 자동 재생 실패 시 조용히 처리
         });
     }
 }
 
-// 페이지 로드 후 자동 재생 시도
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(tryAutoPlay, 500);
-    });
-} else {
-    setTimeout(tryAutoPlay, 500);
-}
-
-// 사용자 인터랙션 후 자동 재생 시도 (스크롤, 클릭 등)
+// 사용자 인터랙션 후 자동 재생 시도
 let userInteracted = false;
 const interactionEvents = ['click', 'touchstart', 'scroll', 'keydown'];
 interactionEvents.forEach(event => {
     document.addEventListener(event, function() {
-        if (!userInteracted && backgroundMusic && backgroundMusic.paused) {
+        if (!userInteracted && backgroundMusic && backgroundMusic.paused && musicPlayer && musicPlayer.style.display !== 'none') {
             userInteracted = true;
             tryAutoPlay();
         }
@@ -314,26 +311,10 @@ if (musicToggle && backgroundMusic) {
     
     // 음악 로드 실패 시 플레이어 숨기기
     backgroundMusic.addEventListener('error', function() {
-        const musicPlayer = document.getElementById('musicPlayer');
         if (musicPlayer) {
             musicPlayer.style.display = 'none';
         }
     });
-}
-
-// 페이지 로드 후 지도 초기화
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMap);
-} else {
-    // 카카오맵 API 로드를 기다림
-    if (typeof kakao !== 'undefined' && kakao.maps) {
-        initMap();
-    } else {
-        // API 로드를 기다림
-        window.addEventListener('load', function() {
-            setTimeout(initMap, 500);
-        });
-    }
 }
 
 // 카운트다운 타이머
