@@ -728,30 +728,65 @@ body {
     line-height: 1.6;
 }
 
+.map-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.map-link,
 .naver-map-link {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     gap: 8px;
-    margin-top: 25px;
+    margin-top: 0;
     padding: 12px 20px;
-    background: #03C75A;
-    color: var(--white);
-    text-decoration: none;
+    background: #03C75A !important;
+    color: var(--white) !important;
+    text-decoration: none !important;
     border-radius: 8px;
     font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(3, 199, 90, 0.3);
+    border: none;
+    cursor: pointer;
 }
 
+.map-link:hover,
 .naver-map-link:hover {
-    background: #02B350;
+    background: #02B350 !important;
+    color: var(--white) !important;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(3, 199, 90, 0.4);
 }
 
+.map-link:visited,
+.naver-map-link:visited {
+    color: var(--white) !important;
+}
+
+.map-link:active,
 .naver-map-link:active {
     transform: translateY(0);
+}
+
+/* 카카오맵 링크 스타일 */
+.map-link:last-child {
+    background: #FEE500 !important;
+    color: #000 !important;
+    box-shadow: 0 2px 8px rgba(254, 229, 0, 0.3);
+}
+
+.map-link:last-child:hover {
+    background: #FDD835 !important;
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgba(254, 229, 0, 0.4);
+}
+
+.map-link:last-child:visited {
+    color: #000 !important;
 }
 
 .map-icon {

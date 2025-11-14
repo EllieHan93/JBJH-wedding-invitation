@@ -268,9 +268,11 @@ function checkMusicFile() {
     }
     
     // 동적으로 음악 소스 설정 (직접 HTML에 노출되지 않음)
+    // audio 태그와 source 태그 모두에 설정
     if (musicSource) {
         musicSource.src = musicUrl;
     }
+    backgroundMusic.src = musicUrl;
     
     // 플레이어 표시
     if (musicPlayer) {
@@ -280,12 +282,14 @@ function checkMusicFile() {
     // 음악 파일이 있는지 확인
     backgroundMusic.addEventListener('canplaythrough', function() {
         musicFileLoaded = true;
+        console.log('음악 파일 로드 완료:', musicUrl);
         // 음악 파일이 로드되면 즉시 재생 시도
         tryAutoPlay();
     }, { once: true });
     
     backgroundMusic.addEventListener('loadeddata', function() {
         musicFileLoaded = true;
+        console.log('음악 데이터 로드 완료');
         // 데이터가 로드되면 재생 시도 (더 빠른 시도)
         tryAutoPlay();
     }, { once: true });
@@ -294,6 +298,7 @@ function checkMusicFile() {
         // 음악 파일 로드 실패 - 플레이어는 표시하되 에러 표시
         console.error('음악 파일 로드 실패:', e);
         console.error('음악 파일 경로:', backgroundMusic.src);
+        console.error('음악 파일 에러 코드:', backgroundMusic.error);
         musicFileLoaded = false;
         
         // 에러 메시지 표시
