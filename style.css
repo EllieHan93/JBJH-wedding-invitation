@@ -162,19 +162,19 @@ body {
 .wedding-text {
     font-family: 'Great Vibes', cursive;
     font-size: 2.5rem;
-    color: var(--text-color);
+    color: var(--white);
     text-align: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    z-index: 10000;
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     opacity: 0;
     animation: fadeIn 0.5s ease-in forwards;
     min-height: 60px;
+    width: 100%;
+    padding: 0 20px;
     box-sizing: border-box;
 }
 
@@ -1328,20 +1328,24 @@ body {
     position: absolute;
     font-size: 20px;
     animation: fall linear infinite;
-    opacity: 0.8;
+    opacity: 1;
     user-select: none;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
+    text-shadow: 
+        0 0 8px rgba(0, 0, 0, 0.8),
+        0 0 4px rgba(0, 0, 0, 0.6),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes fall {
     0% {
         transform: translateY(-100px) rotate(0deg);
-        opacity: 0.7;
+        opacity: 1;
     }
     100% {
         transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
+        opacity: 0.3;
     }
 }
 
