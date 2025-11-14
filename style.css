@@ -1341,7 +1341,7 @@ body {
 
 .falling-heart {
     position: absolute;
-    font-size: 20px;
+    font-size: 14px;
     animation: fall linear infinite;
     opacity: 1;
     user-select: none;
