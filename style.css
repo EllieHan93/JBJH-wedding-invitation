@@ -773,19 +773,19 @@ body {
 }
 
 /* 카카오맵 링크 스타일 */
-.map-link:last-child {
+.kakao-map-link {
     background: #FEE500 !important;
     color: #000 !important;
     box-shadow: 0 2px 8px rgba(254, 229, 0, 0.3);
 }
 
-.map-link:last-child:hover {
+.kakao-map-link:hover {
     background: #FDD835 !important;
     color: #000 !important;
     box-shadow: 0 4px 12px rgba(254, 229, 0, 0.4);
 }
 
-.map-link:last-child:visited {
+.kakao-map-link:visited {
     color: #000 !important;
 }
 
