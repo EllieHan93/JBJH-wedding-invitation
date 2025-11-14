@@ -446,6 +446,71 @@ function openKakaoTalk(url) {
     }
 }
 
+// 전화번호 복사 기능
+function copyPhoneNumber(phoneNumber, event) {
+    event.preventDefault();
+    
+    // 클립보드에 복사
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(phoneNumber).then(() => {
+            // 복사 성공 알림
+            showCopyNotification(phoneNumber + ' 복사되었습니다');
+        }).catch(() => {
+            // 복사 실패 시 대체 방법
+            fallbackCopyPhoneNumber(phoneNumber);
+        });
+    } else {
+        // 클립보드 API를 지원하지 않는 경우 대체 방법
+        fallbackCopyPhoneNumber(phoneNumber);
+    }
+}
+
+// 전화번호 복사 대체 방법
+function fallbackCopyPhoneNumber(phoneNumber) {
+    const textArea = document.createElement('textarea');
+    textArea.value = phoneNumber;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopyNotification(phoneNumber + ' 복사되었습니다');
+    } catch (err) {
+        // 복사 실패 시 전화 걸기
+        window.location.href = `tel:${phoneNumber.replace(/[-\s]/g, '')}`;
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// 복사 알림 표시
+function showCopyNotification(message) {
+    // 기존 알림 제거
+    const existingNotification = document.querySelector('.copy-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // 새 알림 생성
+    const notification = document.createElement('div');
+    notification.className = 'copy-notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // 2초 후 제거
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 2000);
+}
+
 // 음악 플레이어 기능 (지연 로딩)
 const backgroundMusic = document.getElementById('backgroundMusic');
 const musicToggle = document.getElementById('musicToggle');
