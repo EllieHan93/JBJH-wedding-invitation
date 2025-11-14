@@ -350,8 +350,14 @@ function openKakaoTalk(url) {
             // Android: 여러 방법 시도
             if (kakaoId) {
                 // 카카오톡 ID가 있으면 ID 기반 사용
-                const intentUrl = `intent://send?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
-                window.location.href = intentUrl;
+                // 방법 1: 일반 딥링크 시도
+                window.location.href = `kakaotalk://chat?id=${kakaoId}`;
+                
+                // 방법 2: Intent 스킴 (fallback)
+                setTimeout(function() {
+                    const intentUrl = `intent://chat?id=${kakaoId}#Intent;scheme=kakaotalk;package=com.kakao.talk;end`;
+                    window.location.href = intentUrl;
+                }, 300);
             } else if (normalizedPhone) {
                 // 전화번호 기반 시도 (여러 형식)
                 // 방법 1: 일반 딥링크
@@ -376,20 +382,9 @@ function openKakaoTalk(url) {
             }
         }
         
-        // 카카오톡 앱이 없을 경우를 대비해 타임아웃 설정
-        let appOpened = false;
-        const checkApp = setTimeout(function() {
-            if (!appOpened) {
-                // 앱이 열리지 않으면 안내
-                alert('카카오톡 앱이 설치되어 있지 않거나, 해당 사용자를 찾을 수 없습니다.\n카카오톡에서 직접 검색해 주세요.');
-            }
-        }, 2000);
-        
-        // 페이지가 포커스를 잃으면 앱이 열린 것으로 간주
-        window.addEventListener('blur', function() {
-            appOpened = true;
-            clearTimeout(checkApp);
-        }, { once: true });
+        // 카카오톡 앱이 열렸는지 확인 (타임아웃 제거 - 조용히 실패)
+        // 전화번호 기반 딥링크는 카카오톡에서 공식 지원하지 않을 수 있음
+        // 에러 메시지 없이 조용히 시도
     } else {
         // 데스크톱: 카카오톡 PC 버전 시도
         if (kakaoId) {
@@ -400,10 +395,7 @@ function openKakaoTalk(url) {
             window.location.href = url;
         }
         
-        // PC 버전이 없을 경우 안내
-        setTimeout(function() {
-            alert('카카오톡 PC 버전이 설치되어 있지 않거나, 해당 사용자를 찾을 수 없습니다.\n카카오톡에서 직접 검색해 주세요.');
-        }, 1000);
+        // PC 버전은 조용히 시도 (에러 메시지 제거)
     }
 }
 
