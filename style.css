@@ -1168,20 +1168,27 @@ body {
     color: var(--text-color);
     font-family: 'Courier New', monospace;
     letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.contact-phone.revealed {
+    color: var(--primary-color);
+    font-weight: 600;
+    animation: revealPulse 0.5s ease;
 }
 
 .contact-copy-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
+    gap: 6px;
     height: 36px;
-    padding: 0;
+    padding: 0 14px;
     background: var(--secondary-color);
     color: var(--text-color);
     border: 1.5px solid var(--primary-color);
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1189,6 +1196,7 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .contact-copy-btn:hover {
@@ -1204,6 +1212,12 @@ body {
 
 .contact-copy-icon {
     font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.contact-copy-text {
+    font-size: 0.85rem;
+    line-height: 1;
 }
 
 .kakao-link {
@@ -1411,26 +1425,43 @@ body {
     font-family: 'Courier New', monospace;
     letter-spacing: 0.5px;
     word-break: break-all;
+    transition: all 0.3s ease;
+}
+
+.account-number.revealed {
+    color: var(--primary-color);
+    font-weight: 600;
+    animation: revealPulse 0.5s ease;
+}
+
+@keyframes revealPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .account-copy-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
+    gap: 6px;
     height: 36px;
-    padding: 0;
+    padding: 0 14px;
     background: var(--primary-color);
     color: var(--white);
     border: none;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Nanum Myeongjo', serif;
     box-shadow: 0 2px 8px rgba(44, 62, 94, 0.2);
     flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .account-copy-btn:hover {
@@ -1445,6 +1476,12 @@ body {
 
 .account-copy-icon {
     font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.account-copy-text {
+    font-size: 0.85rem;
+    line-height: 1;
 }
 
 /* 마무리 섹션 */

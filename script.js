@@ -447,10 +447,56 @@ function openKakaoTalk(url) {
 }
 
 // 전화번호 복사 기능 (전화 앱도 열 수 있도록)
+// 전화번호 복사 함수 (기존 - 호환성 유지)
 function copyPhoneNumber(phoneNumber, event) {
     // 모바일에서는 전화 앱이 자동으로 열리므로 preventDefault 하지 않음
     // 데스크톱에서만 복사 기능 사용
     const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
+    
+    if (!isMobile) {
+        event.preventDefault();
+        
+        // 클립보드에 복사
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(phoneNumber).then(() => {
+                // 복사 성공 알림
+                showCopyNotification(phoneNumber + ' 복사되었습니다');
+            }).catch(() => {
+                // 복사 실패 시 대체 방법
+                fallbackCopyPhoneNumber(phoneNumber);
+            });
+        } else {
+            // 클립보드 API를 지원하지 않는 경우 대체 방법
+            fallbackCopyPhoneNumber(phoneNumber);
+        }
+    }
+    // 모바일에서는 tel: 링크가 자동으로 전화 앱을 열므로 그대로 진행
+}
+
+// 전화번호 복사 함수 (숫자 일시 표시 기능 포함)
+function copyPhoneNumberWithReveal(phoneNumber, telNumber, event) {
+    // 모바일에서는 전화 앱이 자동으로 열리므로 preventDefault 하지 않음
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
+    
+    // 복사 버튼의 부모 요소에서 전화번호 요소 찾기
+    const contactInfoRow = event.target.closest('.contact-info-row');
+    const contactPhoneElement = contactInfoRow ? contactInfoRow.querySelector('.contact-phone') : null;
+    
+    // 원래 표시된 텍스트 저장
+    const originalText = contactPhoneElement ? contactPhoneElement.textContent : '';
+    const fullNumber = contactPhoneElement ? contactPhoneElement.getAttribute('data-full') : phoneNumber;
+    
+    // 잠깐 전체 번호 표시
+    if (contactPhoneElement && fullNumber) {
+        contactPhoneElement.textContent = fullNumber;
+        contactPhoneElement.classList.add('revealed');
+        
+        // 2초 후 다시 마스킹
+        setTimeout(() => {
+            contactPhoneElement.textContent = originalText;
+            contactPhoneElement.classList.remove('revealed');
+        }, 2000);
+    }
     
     if (!isMobile) {
         event.preventDefault();
@@ -518,7 +564,7 @@ function showCopyNotification(message) {
     }, 2000);
 }
 
-// 계좌번호 복사 함수
+// 계좌번호 복사 함수 (기존 - 호환성 유지)
 function copyAccountNumber(parentName, accountNumber, event) {
     event.preventDefault();
     
@@ -540,6 +586,42 @@ function copyAccountNumber(parentName, accountNumber, event) {
         });
     } else {
         fallbackCopyAccountNumber(accountNumber, parentName);
+    }
+}
+
+// 계좌번호 복사 함수 (숫자 일시 표시 기능 포함)
+function copyAccountNumberWithReveal(parentName, fullAccountNumber, accountNumberOnly, event) {
+    event.preventDefault();
+    
+    // 복사 버튼의 부모 요소에서 계좌번호 요소 찾기
+    const accountInfoRow = event.target.closest('.account-info-row');
+    const accountNumberElement = accountInfoRow ? accountInfoRow.querySelector('.account-number') : null;
+    
+    // 원래 표시된 텍스트 저장
+    const originalText = accountNumberElement ? accountNumberElement.textContent : '';
+    const fullNumber = accountNumberElement ? accountNumberElement.getAttribute('data-full') : accountNumberOnly;
+    
+    // 잠깐 전체 번호 표시
+    if (accountNumberElement && fullNumber) {
+        accountNumberElement.textContent = fullNumber;
+        accountNumberElement.classList.add('revealed');
+        
+        // 2초 후 다시 마스킹
+        setTimeout(() => {
+            accountNumberElement.textContent = originalText;
+            accountNumberElement.classList.remove('revealed');
+        }, 2000);
+    }
+    
+    // 클립보드에 복사
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullAccountNumber).then(() => {
+            showCopyNotification(`${parentName} 계좌번호 복사되었습니다`);
+        }).catch(() => {
+            fallbackCopyAccountNumber(fullAccountNumber, parentName);
+        });
+    } else {
+        fallbackCopyAccountNumber(fullAccountNumber, parentName);
     }
 }
 
