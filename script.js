@@ -846,6 +846,10 @@ function shareKakao() {
         // 카카오톡 공유 성공 시 콜백 (선택사항)
         success: function(response) {
             console.log('카카오톡 공유 성공:', response);
+            // 공유 횟수 증가
+            if (window.incrementShareCount) {
+                window.incrementShareCount('kakao');
+            }
         },
         fail: function(error) {
             console.error('카카오톡 공유 실패:', error);
@@ -865,6 +869,10 @@ function fallbackKakaoShare(url, title, description) {
             url: url
         }).then(() => {
             console.log('공유 성공');
+            // 공유 횟수 증가
+            if (window.incrementShareCount) {
+                window.incrementShareCount('kakao');
+            }
         }).catch((error) => {
             console.log('공유 실패:', error);
             // 최종 대체: 카카오톡 링크 공유 페이지
@@ -886,6 +894,11 @@ function shareFacebook() {
 
 function copyLink() {
     const url = window.location.href;
+    
+    // 공유 횟수 증가
+    if (window.incrementShareCount) {
+        window.incrementShareCount('link');
+    }
     
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(() => {
@@ -1018,4 +1031,169 @@ if (document.readyState === 'loading') {
 } else {
     typeWeddingText();
 }
+
+// 조회수 및 공유 횟수 추적 기능 (관리자 모드)
+(function() {
+    // 조회수 증가
+    function incrementViewCount() {
+        let viewCount = parseInt(localStorage.getItem('weddingViewCount') || '0');
+        viewCount++;
+        localStorage.setItem('weddingViewCount', viewCount.toString());
+        return viewCount;
+    }
+    
+    // 공유 횟수 증가 (전역 함수로 노출)
+    window.incrementShareCount = function(type) {
+        // type: 'kakao' 또는 'link'
+        let shareCount = parseInt(localStorage.getItem('weddingShareCount') || '0');
+        shareCount++;
+        localStorage.setItem('weddingShareCount', shareCount.toString());
+        
+        // 타입별 공유 횟수도 추적
+        const typeKey = `weddingShareCount_${type}`;
+        let typeCount = parseInt(localStorage.getItem(typeKey) || '0');
+        typeCount++;
+        localStorage.setItem(typeKey, typeCount.toString());
+        
+        return shareCount;
+    };
+    
+    // 관리자 모드 확인 (비밀번호 기반)
+    function isAdminMode() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const adminKey = urlParams.get('admin');
+        
+        // 비밀번호: '0104' (결혼 날짜)
+        if (adminKey === '0104') {
+            // 세션에만 저장 (페이지를 닫으면 사라짐)
+            sessionStorage.setItem('adminMode', 'true');
+            // URL에서 파라미터 제거 (보안을 위해)
+            window.history.replaceState({}, '', window.location.pathname);
+            return true;
+        }
+        
+        // 세션에 저장된 관리자 모드 확인
+        return sessionStorage.getItem('adminMode') === 'true';
+    }
+    
+    // 조회수 및 공유 횟수 표시
+    function showViewCount() {
+        const viewCountElement = document.getElementById('viewCountDisplay');
+        if (viewCountElement && isAdminMode()) {
+            const viewCount = parseInt(localStorage.getItem('weddingViewCount') || '0');
+            const shareCount = parseInt(localStorage.getItem('weddingShareCount') || '0');
+            const kakaoShareCount = parseInt(localStorage.getItem('weddingShareCount_kakao') || '0');
+            const linkShareCount = parseInt(localStorage.getItem('weddingShareCount_link') || '0');
+            
+            viewCountElement.innerHTML = `
+                <div style="line-height: 1.6;">
+                    <div>조회수: ${viewCount.toLocaleString()}</div>
+                    <div style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 8px;">
+                        <div>공유 횟수: ${shareCount.toLocaleString()}</div>
+                        <div style="font-size: 0.85rem; margin-top: 4px; opacity: 0.9;">
+                            카카오톡: ${kakaoShareCount.toLocaleString()} | 링크: ${linkShareCount.toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+            `;
+            viewCountElement.style.display = 'block';
+        }
+    }
+    
+    // 조회수 증가 (세션당 한 번만)
+    if (!sessionStorage.getItem('viewCounted')) {
+        incrementViewCount();
+        sessionStorage.setItem('viewCounted', 'true');
+    }
+    
+    // 관리자 모드 확인 및 조회수 표시
+    if (isAdminMode()) {
+        showViewCount();
+    }
+})();
+
+// 좋아요 기능
+(function() {
+    const likeBtn = document.getElementById('likeBtn');
+    const likeIcon = document.getElementById('likeIcon');
+    const likeLabel = document.getElementById('likeLabel');
+    const likeCount = document.getElementById('likeCount');
+    
+    // 좋아요 상태 확인 (로컬스토리지 사용)
+    function isLiked() {
+        return localStorage.getItem('weddingLiked') === 'true';
+    }
+    
+    // 좋아요 수 가져오기
+    function getLikeCount() {
+        return parseInt(localStorage.getItem('weddingLikeCount') || '0');
+    }
+    
+    // 좋아요 수 증가
+    function incrementLikeCount() {
+        let count = getLikeCount();
+        count++;
+        localStorage.setItem('weddingLikeCount', count.toString());
+        return count;
+    }
+    
+    // 좋아요 상태 업데이트
+    function updateLikeUI() {
+        if (!likeBtn || !likeIcon) return;
+        
+        const liked = isLiked();
+        const count = getLikeCount();
+        
+        if (liked) {
+            likeIcon.textContent = '❤️';
+            likeBtn.classList.add('liked');
+            if (likeLabel) {
+                likeLabel.textContent = '축하해요';
+            }
+        } else {
+            likeIcon.textContent = '🤍';
+            likeBtn.classList.remove('liked');
+            if (likeLabel) {
+                likeLabel.textContent = '축하해요';
+            }
+        }
+        
+        if (likeCount) {
+            likeCount.textContent = count > 0 ? count : '';
+        }
+    }
+    
+    // 좋아요 토글 (전역 함수로 노출)
+    window.toggleLike = function() {
+        if (!likeBtn || !likeIcon) return;
+        
+        const liked = isLiked();
+        
+        if (liked) {
+            // 이미 좋아요를 눌렀으면 취소 (실제로는 카운트는 유지)
+            localStorage.setItem('weddingLiked', 'false');
+            showToast('축하해주셔서 감사합니다! 💕');
+        } else {
+            // 좋아요 추가
+            localStorage.setItem('weddingLiked', 'true');
+            incrementLikeCount();
+            showToast('축하해주셔서 감사합니다! 💕');
+            
+            // 하트 애니메이션 효과
+            likeBtn.classList.add('heart-animation');
+            setTimeout(() => {
+                likeBtn.classList.remove('heart-animation');
+            }, 600);
+        }
+        
+        updateLikeUI();
+    };
+    
+    // 페이지 로드 시 UI 업데이트
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateLikeUI);
+    } else {
+        updateLikeUI();
+    }
+})();
 

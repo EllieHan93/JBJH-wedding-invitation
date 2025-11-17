@@ -362,6 +362,11 @@
             </div>
             <h2 class="section-title">청첩장 공유하기</h2>
             <div class="share-buttons">
+                <button class="share-btn like-btn" id="likeBtn" onclick="toggleLike()" title="축하해요">
+                    <span class="like-icon" id="likeIcon">🤍</span>
+                    <span class="share-label" id="likeLabel">축하해요</span>
+                    <span class="like-count" id="likeCount">0</span>
+                </button>
                 <button class="share-btn" onclick="shareKakao()" title="공유하기">
                     <span>💬</span>
                     <span class="share-label">공유하기</span>
@@ -415,6 +420,11 @@
         <div class="music-info" id="musicInfo">
             <span class="music-text">배경음악</span>
         </div>
+    </div>
+
+    <!-- 관리자 모드 조회수 및 공유 횟수 표시 -->
+    <div id="viewCountDisplay" style="display: none; position: fixed; top: 20px; right: 20px; background: rgba(44, 62, 94, 0.9); color: white; padding: 12px 20px; border-radius: 25px; font-size: 0.9rem; z-index: 10000; font-family: 'Nanum Myeongjo', serif; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); min-width: 180px;">
+        조회수: 0
     </div>
 
     <script src="script.js" defer></script>
