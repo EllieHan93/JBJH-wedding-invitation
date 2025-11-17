@@ -1084,6 +1084,7 @@ if (document.readyState === 'loading') {
             const shareCount = parseInt(localStorage.getItem('weddingShareCount') || '0');
             const kakaoShareCount = parseInt(localStorage.getItem('weddingShareCount_kakao') || '0');
             const linkShareCount = parseInt(localStorage.getItem('weddingShareCount_link') || '0');
+            const likeCount = parseInt(localStorage.getItem('weddingLikeCount') || '0');
             
             viewCountElement.innerHTML = `
                 <div style="line-height: 1.6;">
@@ -1093,6 +1094,9 @@ if (document.readyState === 'loading') {
                         <div style="font-size: 0.85rem; margin-top: 4px; opacity: 0.9;">
                             카카오톡: ${kakaoShareCount.toLocaleString()} | 링크: ${linkShareCount.toLocaleString()}
                         </div>
+                    </div>
+                    <div style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 8px;">
+                        <div>좋아요: ${likeCount.toLocaleString()}</div>
                     </div>
                 </div>
             `;
@@ -1107,9 +1111,24 @@ if (document.readyState === 'loading') {
     }
     
     // 관리자 모드 확인 및 조회수 표시
+    // 페이지 로드 시 즉시 확인
     if (isAdminMode()) {
         showViewCount();
     }
+    
+    // URL 파라미터 변경 감지를 위한 주기적 확인 (초기 로드 후)
+    setTimeout(() => {
+        if (isAdminMode()) {
+            showViewCount();
+        }
+    }, 100);
+    
+    // URL 변경 감지 (뒤로가기/앞으로가기 등)
+    window.addEventListener('popstate', function() {
+        if (isAdminMode()) {
+            showViewCount();
+        }
+    });
 })();
 
 // 좋아요 기능
@@ -1159,7 +1178,14 @@ if (document.readyState === 'loading') {
         }
         
         if (likeCount) {
-            likeCount.textContent = count > 0 ? count : '';
+            // 좋아요를 누른 상태일 때만 카운트 표시
+            if (liked && count > 0) {
+                likeCount.textContent = count;
+                likeCount.style.display = 'block';
+            } else {
+                likeCount.textContent = '';
+                likeCount.style.display = 'none';
+            }
         }
     }
     
