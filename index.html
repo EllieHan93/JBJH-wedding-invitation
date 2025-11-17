@@ -382,86 +382,9 @@
                 <span class="divider-icon">💝</span>
             </div>
             <h2 class="section-title">마음 전하기</h2>
-            <div class="account-grid">
-                <!-- 신랑 부모님 -->
-                <div class="account-column">
-                    <div class="account-card">
-                        <div class="account-header">
-                            <div class="account-icon">💐</div>
-                            <h3>신랑측</h3>
-                        </div>
-                        <div class="account-list">
-                            <div class="account-parent-group">
-                                <div class="account-item">
-                                    <div class="account-name">양태융</div>
-                                    <div class="account-info-row">
-                                        <div class="account-info">
-                                            <span class="account-bank">국민은행</span>
-                                            <span class="account-number" data-full="48132501040096">48********96</span>
-                                        </div>
-                                        <button class="account-copy-btn" onclick="copyAccountNumberWithReveal('신랑 부모님 (아버지)', '국민은행 48132501040096', '48132501040096', event);" title="계좌번호 복사">
-                                            <span class="account-copy-icon">📋</span>
-                                            <span class="account-copy-text">복사하기</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="account-item">
-                                    <div class="account-name">조미경</div>
-                                    <div class="account-info-row">
-                                        <div class="account-info">
-                                            <span class="account-bank">국민은행</span>
-                                            <span class="account-number" data-full="05780104011832">05********32</span>
-                                        </div>
-                                        <button class="account-copy-btn" onclick="copyAccountNumberWithReveal('신랑 부모님 (어머니)', '국민은행 05780104011832', '05780104011832', event);" title="계좌번호 복사">
-                                            <span class="account-copy-icon">📋</span>
-                                            <span class="account-copy-text">복사하기</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 신부 부모님 -->
-                <div class="account-column">
-                    <div class="account-card">
-                        <div class="account-header">
-                            <div class="account-icon">💐</div>
-                            <h3>신부측</h3>
-                        </div>
-                        <div class="account-list">
-                            <div class="account-parent-group">
-                                <div class="account-item">
-                                    <div class="account-name">한상문</div>
-                                    <div class="account-info-row">
-                                        <div class="account-info">
-                                            <span class="account-bank">우리은행</span>
-                                            <span class="account-number" data-full="318-005252-12-101">318-****-*-*01</span>
-                                        </div>
-                                        <button class="account-copy-btn" onclick="copyAccountNumberWithReveal('신부 부모님 (아버지)', '우리은행 318-005252-12-101', '318-005252-12-101', event);" title="계좌번호 복사">
-                                            <span class="account-copy-icon">📋</span>
-                                            <span class="account-copy-text">복사하기</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="account-item">
-                                    <div class="account-name">이유영</div>
-                                    <div class="account-info-row">
-                                        <div class="account-info">
-                                            <span class="account-bank">우리은행</span>
-                                            <span class="account-number" data-full="1002-040-675106">1002-***-***06</span>
-                                        </div>
-                                        <button class="account-copy-btn" onclick="copyAccountNumberWithReveal('신부 부모님 (어머니)', '우리은행 1002-040-675106', '1002-040-675106', event);" title="계좌번호 복사">
-                                            <span class="account-copy-icon">📋</span>
-                                            <span class="account-copy-text">복사하기</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button class="account-modal-btn" onclick="openAccountModal()">
+                <span class="account-modal-text">계좌번호 확인하기</span>
+            </button>
         </div>
     </section>
 
@@ -506,6 +429,108 @@
     <div class="modal" id="imageModal">
         <span class="modal-close">&times;</span>
         <img class="modal-content" id="modalImage">
+    </div>
+
+    <!-- 계좌번호 모달 -->
+    <div class="account-modal" id="accountModal">
+        <div class="account-modal-content">
+            <span class="account-modal-close" onclick="closeAccountModal()">&times;</span>
+            <h2 class="account-modal-title">마음 전하기</h2>
+            <div class="account-modal-grid">
+                <!-- 신랑 부모님 -->
+                <div class="account-modal-column">
+                    <div class="account-modal-card">
+                        <div class="account-modal-header">
+                            <div class="account-modal-icon">💐</div>
+                            <h3>신랑측</h3>
+                        </div>
+                        <div class="account-modal-list">
+                            <div class="account-modal-parent-group">
+                                <div class="account-modal-item">
+                                    <div class="account-modal-name">양태융</div>
+                                    <div class="account-modal-info">
+                                        <span class="account-modal-bank">국민은행</span>
+                                        <span class="account-modal-number">48132501040096</span>
+                                    </div>
+                                    <button class="account-modal-copy-btn" onclick="copyAccountFromModal('신랑 부모님 (아버지)', '국민은행 48132501040096');" title="계좌번호 복사">
+                                        <span class="account-modal-copy-icon">📋</span>
+                                        <span class="account-modal-copy-text">복사하기</span>
+                                    </button>
+                                </div>
+                                <div class="account-modal-item">
+                                    <div class="account-modal-name">조미경</div>
+                                    <div class="account-modal-info">
+                                        <span class="account-modal-bank">국민은행</span>
+                                        <span class="account-modal-number">05780104011832</span>
+                                    </div>
+                                    <button class="account-modal-copy-btn" onclick="copyAccountFromModal('신랑 부모님 (어머니)', '국민은행 05780104011832');" title="계좌번호 복사">
+                                        <span class="account-modal-copy-icon">📋</span>
+                                        <span class="account-modal-copy-text">복사하기</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="account-modal-item">
+                                <div class="account-modal-name">양진보</div>
+                                <div class="account-modal-info">
+                                    <span class="account-modal-bank">국민은행</span>
+                                    <span class="account-modal-number">057801-04-075726</span>
+                                </div>
+                                <button class="account-modal-copy-btn" onclick="copyAccountFromModal('신랑', '국민은행 057801-04-075726');" title="계좌번호 복사">
+                                    <span class="account-modal-copy-icon">📋</span>
+                                    <span class="account-modal-copy-text">복사하기</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 신부 부모님 -->
+                <div class="account-modal-column">
+                    <div class="account-modal-card">
+                        <div class="account-modal-header">
+                            <div class="account-modal-icon">💐</div>
+                            <h3>신부측</h3>
+                        </div>
+                        <div class="account-modal-list">
+                            <div class="account-modal-parent-group">
+                                <div class="account-modal-item">
+                                    <div class="account-modal-name">한상문</div>
+                                    <div class="account-modal-info">
+                                        <span class="account-modal-bank">우리은행</span>
+                                        <span class="account-modal-number">318-005252-12-101</span>
+                                    </div>
+                                    <button class="account-modal-copy-btn" onclick="copyAccountFromModal('신부 부모님 (아버지)', '우리은행 318-005252-12-101');" title="계좌번호 복사">
+                                        <span class="account-modal-copy-icon">📋</span>
+                                        <span class="account-modal-copy-text">복사하기</span>
+                                    </button>
+                                </div>
+                                <div class="account-modal-item">
+                                    <div class="account-modal-name">이유영</div>
+                                    <div class="account-modal-info">
+                                        <span class="account-modal-bank">우리은행</span>
+                                        <span class="account-modal-number">1002-040-675106</span>
+                                    </div>
+                                    <button class="account-modal-copy-btn" onclick="copyAccountFromModal('신부 부모님 (어머니)', '우리은행 1002-040-675106');" title="계좌번호 복사">
+                                        <span class="account-modal-copy-icon">📋</span>
+                                        <span class="account-modal-copy-text">복사하기</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="account-modal-item">
+                                <div class="account-modal-name">한정화</div>
+                                <div class="account-modal-info">
+                                    <span class="account-modal-bank">기업은행</span>
+                                    <span class="account-modal-number">01046086272</span>
+                                </div>
+                                <button class="account-modal-copy-btn" onclick="copyAccountFromModal('신부', '기업은행 01046086272');" title="계좌번호 복사">
+                                    <span class="account-modal-copy-icon">📋</span>
+                                    <span class="account-modal-copy-text">복사하기</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 음악 플레이어 (음악 파일이 있을 때만 표시) -->

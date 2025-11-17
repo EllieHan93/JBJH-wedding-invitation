@@ -708,7 +708,7 @@ body {
 
 .main-photo {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     aspect-ratio: 3/4;
     border-radius: 15px;
     overflow: hidden;
@@ -1482,6 +1482,240 @@ body {
 .account-copy-text {
     font-size: 0.85rem;
     line-height: 1;
+}
+
+/* 계좌번호 모달 버튼 */
+.account-modal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 280px;
+    margin: 40px auto 0;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--text-color) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Nanum Myeongjo', serif;
+    box-shadow: 0 4px 15px rgba(44, 62, 94, 0.3);
+}
+
+.account-modal-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(44, 62, 94, 0.4);
+}
+
+.account-modal-btn:active {
+    transform: translateY(-1px);
+}
+
+.account-modal-icon {
+    font-size: 1.5rem;
+}
+
+.account-modal-text {
+    font-size: 1rem;
+}
+
+/* 계좌번호 모달 */
+.account-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.3s;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.account-modal-content {
+    position: relative;
+    background: var(--white);
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.4s;
+}
+
+.account-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: var(--text-color);
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 2001;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.account-modal-close:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.account-modal-title {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-family: 'Nanum Myeongjo', serif;
+    font-weight: 600;
+}
+
+.account-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+.account-modal-column {
+    width: 100%;
+}
+
+.account-modal-card {
+    background: var(--secondary-color);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.account-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.account-modal-header .account-modal-icon {
+    font-size: 1.8rem;
+}
+
+.account-modal-header h3 {
+    font-size: 1.4rem;
+    color: var(--text-color);
+    font-family: 'Nanum Myeongjo', serif;
+    font-weight: 600;
+    margin: 0;
+}
+
+.account-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.account-modal-parent-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.account-modal-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px;
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid rgba(44, 62, 94, 0.1);
+}
+
+.account-modal-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    font-family: 'Nanum Myeongjo', serif;
+}
+
+.account-modal-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.account-modal-bank {
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.account-modal-number {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    word-break: break-all;
+    font-weight: 500;
+}
+
+.account-modal-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Nanum Myeongjo', serif;
+    box-shadow: 0 2px 8px rgba(44, 62, 94, 0.2);
+}
+
+.account-modal-copy-btn:hover {
+    background: var(--text-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 62, 94, 0.3);
+}
+
+.account-modal-copy-btn:active {
+    transform: translateY(0);
+}
+
+.account-modal-copy-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.account-modal-copy-text {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+/* 반응형 - 계좌번호 모달 */
+@media (min-width: 768px) {
+    .account-modal-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .account-modal-content {
+        padding: 50px 40px;
+    }
 }
 
 /* 마무리 섹션 */

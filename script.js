@@ -23,8 +23,10 @@ function changePhoto(index) {
     const photo = photoList[index];
     
     // 메인 이미지 변경
-    mainPhoto.src = photo.url;
-    mainPhoto.alt = photo.alt;
+    if (mainPhoto) {
+        mainPhoto.src = photo.url;
+        mainPhoto.alt = photo.alt;
+    }
     
     // 활성 썸네일 변경
     thumbnailItems.forEach(thumb => thumb.classList.remove('active'));
@@ -190,11 +192,17 @@ modal.addEventListener('click', function(e) {
     }
 });
 
-// ESC 키로 모달 닫기
+// 키보드로 모달 제어
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && modal.style.display === 'block') {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+    if (modal && modal.style.display === 'block') {
+        if (e.key === 'Escape') {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        } else if (e.key === 'ArrowLeft') {
+            prevPhoto();
+        } else if (e.key === 'ArrowRight') {
+            nextPhoto();
+        }
     }
 });
 
@@ -643,6 +651,60 @@ function fallbackCopyAccountNumber(accountNumber, parentName) {
     }
     document.body.removeChild(textArea);
 }
+
+// 계좌번호 모달 열기
+function openAccountModal() {
+    const modal = document.getElementById('accountModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// 계좌번호 모달 닫기
+function closeAccountModal() {
+    const modal = document.getElementById('accountModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// 모달 내에서 계좌번호 복사
+function copyAccountFromModal(parentName, fullAccountNumber) {
+    // 클립보드에 복사
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullAccountNumber).then(() => {
+            showCopyNotification(`${parentName} 계좌번호 복사되었습니다`);
+        }).catch(() => {
+            fallbackCopyAccountNumber(fullAccountNumber, parentName);
+        });
+    } else {
+        fallbackCopyAccountNumber(fullAccountNumber, parentName);
+    }
+}
+
+// 계좌번호 모달 배경 클릭 시 닫기
+document.addEventListener('DOMContentLoaded', function() {
+    const accountModal = document.getElementById('accountModal');
+    if (accountModal) {
+        accountModal.addEventListener('click', function(e) {
+            if (e.target === accountModal) {
+                closeAccountModal();
+            }
+        });
+    }
+    
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const accountModal = document.getElementById('accountModal');
+            if (accountModal && accountModal.style.display === 'flex') {
+                closeAccountModal();
+            }
+        }
+    });
+});
 
 // 음악 플레이어 기능 (지연 로딩)
 const backgroundMusic = document.getElementById('backgroundMusic');
