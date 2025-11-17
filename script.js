@@ -1136,7 +1136,6 @@ if (document.readyState === 'loading') {
     const likeBtn = document.getElementById('likeBtn');
     const likeIcon = document.getElementById('likeIcon');
     const likeLabel = document.getElementById('likeLabel');
-    const likeCount = document.getElementById('likeCount');
     
     // 좋아요 상태 확인 (로컬스토리지 사용)
     function isLiked() {
@@ -1161,7 +1160,6 @@ if (document.readyState === 'loading') {
         if (!likeBtn || !likeIcon) return;
         
         const liked = isLiked();
-        const count = getLikeCount();
         
         if (liked) {
             likeIcon.textContent = '❤️';
@@ -1174,17 +1172,6 @@ if (document.readyState === 'loading') {
             likeBtn.classList.remove('liked');
             if (likeLabel) {
                 likeLabel.textContent = '축하해요';
-            }
-        }
-        
-        if (likeCount) {
-            // 좋아요를 누른 상태일 때만 카운트 표시
-            if (liked && count > 0) {
-                likeCount.textContent = count;
-                likeCount.style.display = 'block';
-            } else {
-                likeCount.textContent = '';
-                likeCount.style.display = 'none';
             }
         }
     }
