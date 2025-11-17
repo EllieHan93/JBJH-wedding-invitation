@@ -6,16 +6,33 @@
     <title>양진보 & 한정화 결혼합니다</title>
     <script>
         // GitHub Pages 404 에러 방지 - index.html로 리다이렉트
-        var path = window.location.pathname;
-        var search = window.location.search;
-        var hash = window.location.hash;
-        
-        // index.html로 리다이렉트 (쿼리 파라미터와 해시 유지)
-        window.location.replace('/' + (path.split('/').filter(function(p) { return p && p !== 'index.html'; }).join('/') || '') + 'index.html' + search + hash);
+        (function() {
+            var path = window.location.pathname;
+            var search = window.location.search;
+            var hash = window.location.hash;
+            
+            // 저장소 이름 추출 (JBJH-wedding-invitation)
+            var repoName = '/JBJH-wedding-invitation';
+            
+            // 현재 경로에서 저장소 이름이 포함되어 있는지 확인
+            if (path.indexOf(repoName) === -1) {
+                // 저장소 이름이 없으면 추가
+                path = repoName + '/';
+            } else {
+                // 저장소 이름이 있으면 그대로 사용
+                path = repoName + '/';
+            }
+            
+            // index.html로 리다이렉트 (쿼리 파라미터와 해시 유지)
+            var redirectUrl = path + 'index.html' + search + hash;
+            window.location.replace(redirectUrl);
+        })();
     </script>
+    <meta http-equiv="refresh" content="0; url=/JBJH-wedding-invitation/index.html">
 </head>
 <body>
     <p>페이지를 불러오는 중...</p>
+    <p>자동으로 이동되지 않으면 <a href="/JBJH-wedding-invitation/index.html">여기를 클릭하세요</a>.</p>
 </body>
 </html>
 
